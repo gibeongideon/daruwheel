@@ -265,4 +265,6 @@ class Bet(TimeTrack): # Facade for  bet session
 
 
 
-
+class BetInstance(object):
+     
+    
