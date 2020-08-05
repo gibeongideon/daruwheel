@@ -1,7 +1,37 @@
 
 from django.contrib.auth.models import User
-from .models import CustomUser ,Account
+from .models import *
+
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password',
+        )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=['username', 'email']
+            )
+        ]
+
+
+
+
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     
@@ -12,15 +42,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """
-    A UserProfile serializer to return the UserProfile details
-    """
-    # profile = UserProfileSerializer(required=True)
+# class UserSerializer(serializers.ModelSerializer):
+#     """
+#     A UserProfile serializer to return the UserProfile details
+#     """
+#     # profile = UserProfileSerializer(required=True)
 
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password',)#'profile')
+#     class Meta:
+#         model = User
+#         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password',)#'profile')
 
     # def create(self, validated_data):
     #     password = validated_data.pop('password')
@@ -66,3 +96,25 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = ('user','number','timestamp',  'active','autogen_account_no')
         read_only_fields = ('active', 'is_staff')
+
+
+
+class MarketInstanceSerializer(serializers.ModelSerializer):
+    """
+    A UserProfile serializer to return the UserProfile details
+    """
+    # profile = UserProfileSerializer(required=True)
+    class Meta:
+        model = MarketInstance
+        fields = ('__all__')
+        # fields = ('id', 'marketinstance', 'amount_stake_per_market', 'created_at', 'bet_expiry_time', 'closed_at',)#'profile')
+
+
+class StakeSerializer(serializers.ModelSerializer):
+    """
+    A Stake serializer to return the UserProfile details
+    """
+    class Meta:
+        model = Stake
+        # fields = ('__all__')
+        fields = ('id','balanc_id','balanc','marketinstant','marketselection','amount','update_account_on_win_lose',)
