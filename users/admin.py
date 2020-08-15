@@ -12,45 +12,50 @@ admin.site.register(CustomUser, CustomUserAdmin)
 
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('id','user_id','user','number', 'timestamp', 'active','created_at','updated_at')
+    list_display = ('user_id','user','number','balance', 'active','created_at','updated_at')
     list_display_links = ('number',)
     search_fields = ('number',)
+    list_editable = ('active',)
 
 
 admin.site.register(Account, AccountAdmin)
 
 
 class BalanceAdmin(admin.ModelAdmin):
-    list_display = ('id','acount_id','acount','total_balance','created_at','updated_at')
-    list_display_links = ('acount',)
-    search_fields = ('acount',)
+    list_display = ('user_bal','account_bal','amount','now_bal','trans_type','created_at','updated_at')
+    list_display_links = ('user_bal',)
+    search_fields = ('user_bal',)
+    list_filter =('user_bal',)
 
 
 admin.site.register(Balance, BalanceAdmin)
 
 
 class CashDepositAdmin(admin.ModelAdmin):
-    list_display = ('id','balanc_id','balanc','amount','created_at','updated_at')
+    list_display = ('user_depo','deposited','user_record_done','amount','current_bal','created_at','updated_at')
     list_display_links = ('amount',)
     search_fields = ('amount',)
+    list_filter =('user_depo',)
 
 
 admin.site.register(CashDeposit, CashDepositAdmin)
 
 
 class CashWithrawalAdmin(admin.ModelAdmin):
-    list_display = ('id','balanc_id','balanc','amount','created_at','updated_at')
+    list_display = ('user_withr','withrawned','user_record_done','amount','current_bal','created_at','updated_at')
     list_display_links = ('amount',)
     search_fields = ('amount',)
+    list_filter =('user_withr',)
 
 
 admin.site.register(CashWithrawal, CashWithrawalAdmin)
 
 class StakeAdmin(admin.ModelAdmin):
-    list_display = ('id','balanc_id','balanc','marketinstant','marketselection','current_bal','amount','account_apdated','outcome','update_account_on_win_lose','place_bet_is_active','start_at','ends_at')
-    list_display_links = ('amount',)
-    search_fields = ('balanc',)
+    list_display = ('id','user_stake','marketinstant','marketselection','account_bal','current_bal','amount','stake_placed','user_record_done','account_apdated','outcome','update_account_on_win_lose','place_bet_is_active','start_at','ends_at')
+    list_display_links = ('user_stake',)
+    search_fields = ('user_stake',)
     # list_editable = ('outcome',)
+    list_filter =('user_stake','marketinstant','marketselection')
     
 
 
@@ -67,9 +72,10 @@ admin.site.register(MarketSelection, MarketSelectionAdmin)
 
 
 class MarketInstanceAdmin(admin.ModelAdmin):
-    list_display = ('id','amount_stake_per_market','total_bet_amount_per_marktinstance','black_bet_amount','white_bet_amount','determine_result_algo','created_at','bet_expiry_time','closed_at','updated_at','place_stake_is_active','instance_is_active','get_result_active',)
+    list_display = ('id','closed','amount_stake_per_market','total_bet_amount_per_marktinstance','black_bet_amount','white_bet_amount','gain','determine_result_algo','created_at','bet_expiry_time','closed_at','results_at','updated_at','place_stake_is_active','instance_is_active','get_result_active',)
     list_display_links = ('id',)
     #list_editable = ('place_stake_is_active',)
+    # list_editable = ('closed',)
 
 
 admin.site.register(MarketInstance, MarketInstanceAdmin) 
@@ -84,24 +90,11 @@ admin.site.register(CumulativeGain, CumulativeGainAdmin)
 
 
 
-# from users.models import MarketInstance
-from time import sleep
-
-from .models import MarketInstance
-
-
-def control():
-    try:
-        while True:
-            MarketInstance.objects.create()
-            print('MARKET INSTANCE CREATED!!!')
-            sleep(10)
-
-    except Exception as e:
-        print('CONTROL',e)
-        return e
+class ResultAdmin(admin.ModelAdmin):
+    list_display = ('id','closed','market','resu','created_at','updated_at',)
+    list_display_links = ('id',)
+    # list_editable = ('closed',)
 
 
+admin.site.register(Result, ResultAdmin) 
 
-# if '__name__' = '__main__':
-#     control()
