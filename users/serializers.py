@@ -117,4 +117,4 @@ class StakeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stake
         # fields = ('__all__')
-        fields = ('id','balanc_id','balanc','marketinstant','marketselection','amount','update_account_on_win_lose',)
+        fields = ('user_stake','marketinstant','marketselection','amount','update_account_on_win_lose',)
