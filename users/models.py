@@ -74,6 +74,14 @@ class Balance (TimeStamp):
         except Exception as e:
             return e   
 
+    @property
+    def current_bal(self):
+        try:
+            ac_bal = Account.objects.get(user_id =self.user_depo).balance
+            return ac_bal
+        except Exception as e:
+            return e   
+
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
@@ -124,7 +132,7 @@ class CashDeposit(TimeStamp):
         except Exception as e:
             return e
 
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
