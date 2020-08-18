@@ -18,18 +18,19 @@ class TimeStamp(models.Model):
         abstract = True
 
 
-class CustomUser(TimeStamp):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='users')
+class UserDetail(TimeStamp):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='users',blank =True,null=True)
     mobile_no = models.CharField(max_length=10,unique = True, blank=True,null=True)
 
     def __str__(self):
         return self.user.username
+
     # class Meta:
         # ordering = ('id',)
         # unique_together = (['user', 'mobile_no',])
 
 class Account(TimeStamp):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts')
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     number = models.CharField(max_length =200,blank=True,null=True)
     balance =models.FloatField(default = 0)
     active = models.BooleanField(default= True)
@@ -70,6 +71,14 @@ class Balance (TimeStamp):
     def account_bal(self):
         try:
             ac_bal = Account.objects.get(user_id =self.user_bal_id).balance
+            return ac_bal
+        except Exception as e:
+            return e   
+
+    @property
+    def current_bal(self):
+        try:
+            ac_bal = Account.objects.get(user_id =self.user_depo).balance
             return ac_bal
         except Exception as e:
             return e   
@@ -124,7 +133,7 @@ class CashDeposit(TimeStamp):
         except Exception as e:
             return e
 
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
