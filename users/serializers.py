@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = CustomUser
+        model = UserDetail
         fields = ('user_id','user',  'mobile_no',)
         read_only_fields = ('active', 'is_staff')
 
