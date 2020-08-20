@@ -2,13 +2,13 @@
 from django.contrib import admin
 from .models import *
 
-class CustomUserAdmin(admin.ModelAdmin):
+class UserDetailAdmin(admin.ModelAdmin):
     list_display = ('user', 'mobile_no',)
     list_display_links = ('user',)
     search_fields = ('user',)
     ordering = ('user',)
 
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(UserDetail, UserDetailAdmin)
 
 
 class AccountAdmin(admin.ModelAdmin):
@@ -72,7 +72,7 @@ admin.site.register(MarketSelection, MarketSelectionAdmin)
 
 
 class MarketInstanceAdmin(admin.ModelAdmin):
-    list_display = ('id','closed','amount_stake_per_market','total_bet_amount_per_marktinstance','black_bet_amount','white_bet_amount','gain','determine_result_algo','created_at','bet_expiry_time','closed_at','results_at','updated_at','place_stake_is_active','instance_is_active','get_result_active',)
+    list_display = ('id','closed','amount_stake_per_market','total_bet_amount_per_marktinstance','black_bet_amount','white_bet_amount','offset','gain_after_relief','determine_result_algo','created_at','bet_expiry_time','closed_at','results_at','updated_at','place_stake_is_active','instance_is_active','get_result_active',)
     list_display_links = ('id',)
     #list_editable = ('place_stake_is_active',)
     # list_editable = ('closed',)
@@ -98,3 +98,11 @@ class ResultAdmin(admin.ModelAdmin):
 
 admin.site.register(Result, ResultAdmin) 
 
+
+class BetSettingVarAdmin(admin.ModelAdmin):
+    list_display = ('id','per_return','created_at','updated_at',)
+    list_display_links = ('id',)
+    list_editable = ('per_return',)
+
+
+admin.site.register(BetSettingVar, BetSettingVarAdmin) 
