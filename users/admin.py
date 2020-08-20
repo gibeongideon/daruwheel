@@ -100,9 +100,9 @@ admin.site.register(Result, ResultAdmin)
 
 
 class BetSettingVarAdmin(admin.ModelAdmin):
-    list_display = ('id','per_return','created_at','updated_at',)
+    list_display = ('id','per_return','bet_expiry_time','closed_at','results_at','created_at','updated_at',)
     list_display_links = ('id',)
-    list_editable = ('per_return',)
+    list_editable = ('per_return','bet_expiry_time','closed_at','results_at')
 
 
 admin.site.register(BetSettingVar, BetSettingVarAdmin) 

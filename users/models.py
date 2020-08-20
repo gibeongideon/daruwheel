@@ -24,17 +24,6 @@ class UserDetail(TimeStamp):
     def __str__(self):
         return self.user.username
 
-    # def save(self, *args, **kwargs):
-    #     try:
-    #         Account.objects.update_or_create(user_id = self.user_id)
-
-    #     except Exception as e :
-    #         print('DDDDDD',e)
-    #         return e
-
-    #     super().save(*args, **kwargs)
-
-
 class Account(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     number = models.CharField(max_length =200,blank=True,null=True)
@@ -298,7 +287,6 @@ class Stake (models.Model):
             super().save(*args, **kwargs)
 
 
-## start and end neeedded//Counter when it start//Not counters BUT TIMERS
 class MarketInstance(models.Model):
     amount_stake_per_market = models.FloatField(max_length=100,blank =True,null=True)  # not needed
 
@@ -312,7 +300,6 @@ class MarketInstance(models.Model):
 
     closed = models.BooleanField(blank =True,null= True)
     
-    # markets = models.ForeignKey('CumulativeGain', on_delete=models.CASCADE,related_name='markets',blank =True,null= True)
 
     def __str__(self):
         return f'MarketInstance({self.id})'
@@ -382,7 +369,6 @@ class MarketInstance(models.Model):
         except Exception as e:
             return e
 
-
     @property
     def offset(self):
         try:
@@ -414,14 +400,15 @@ class MarketInstance(models.Model):
         except Exception as e:
             return  e
 
-
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on staking  '''
         # if self.pk:
         try:
-            self.bet_expiry_time = self.created_at + timedelta(minutes =7)
-            self.closed_at = self.created_at + timedelta(minutes =8)
-            self.results_at = self.created_at + timedelta(minutes =8.1)
+            set_up = BetSettingVar.objects.get(id =1)# Set up variables
+
+            self.bet_expiry_time = self.created_at + timedelta(minutes =set_up.bet_expiry_time)
+            self.closed_at = self.created_at + timedelta(minutes = set_up.closed_at)
+            self.results_at = self.created_at + timedelta(minutes =set_up.results_at)
 
         except Exception as e:
             return e
@@ -439,25 +426,28 @@ class CumulativeGain(models.Model):
 
 
 class Result(TimeStamp):
+
     market = models.OneToOneField(MarketInstance,on_delete=models.CASCADE,related_name='rmarkets',blank =True,null= True)
     cumgain = models.ForeignKey(CumulativeGain,on_delete=models.CASCADE,related_name='gains',blank =True,null= True)
 
     resu = models.FloatField(blank =True,null= True)
     closed = models.BooleanField(blank =True,null= True)
-
+    
 
     def per_return(self,all_gain,user_stake,all_lose_stake,per_to_return):
         return_amount = (per_to_return/100)*all_gain
         per_user_return = (user_stake/all_lose_stake)*return_amount
         return per_user_return
 
+    def update_acc_n_bal_record(self,user_id,new_bal,amount,trans_type):
+        Account.objects.filter(user_id =user_id).update(balance= new_bal)
+        Balance.objects.create(user_bal_id =user_id,amount= amount ,trans_type = trans_type) 
     
     def save(self, *args, **kwargs):  
         ''' Overrride internal model save method to update balance on staking  '''
         self.resu = self.market.determine_result_algo
 
         if not self.closed:
-
             try:
                 for _stake in Stake.objects.filter(marketinstant = self.market).all(): 
                     user_id = _stake.user_stake_id
@@ -467,32 +457,28 @@ class Result(TimeStamp):
                         amount = user_stake.amount
 
                         if user_stake.marketselection_id == self.resu:
-                            new_bal = ctotal_balanc + amount*2  # odds hard coded for now
-                            Account.objects.filter(user_id =user_id).update(balance= new_bal)
-                            Balance.objects.create(user_bal_id =user_id,amount= amount*2 ,trans_type = 'WIN') # odds Hard coded TODO fix this/ no hard coding!
+                            new_bal = ctotal_balanc + amount*2 
+                            amount = amount*2
+                            trans_type = 'WIN' 
+                            self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)
 
                         elif user_stake.marketselection_id != self.resu:
                             all_gain = self.market.offset
-                            userstake =  user_stake.amount # Stake.objects.(user_stake_id =user_id).amount
+                            userstake =  user_stake.amount
                             if self.resu == 2:
                                 all_lose_stake = self.market.black_bet_amount
-                            else:
+                            elif self.resu ==1:
                                 all_lose_stake =self.market.white_bet_amount
-
-                            print('all_lose_stake',all_lose_stake)
 
                             per_to_return = BetSettingVar.objects.get(id = 1).per_return # 
 
-                            print(f'return PER: {per_to_return}')
-        
-                            
                             relief_amount = self.per_return(all_gain,userstake,all_lose_stake,per_to_return)
                             new_bal = ctotal_balanc + relief_amount
-                            Account.objects.filter(user_id =user_id).update(balance= new_bal)
-                            Balance.objects.create(user_bal_id =user_id,amount= relief_amount ,trans_type = 'Relief On LOSE') # odds Hard coded TODO fix this/ no hard coding!
-
-
-                    # closed subsequent Account Update to prevent  multible update on one transaction
+                            amount= relief_amount
+                            trans_type = 'Relief On LOSE'
+                            self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)  
+  
+                                                                                          
                     self.closed= True
 
             except Exception as e:
@@ -501,7 +487,6 @@ class Result(TimeStamp):
 
         super().save(*args, **kwargs)
 
-
 class WhoWinsAlgo(object):
 
     def vfl_basic(self):
@@ -509,4 +494,7 @@ class WhoWinsAlgo(object):
 
         
 class BetSettingVar(TimeStamp):
-    per_return = models.IntegerField(default = 0,blank =True,null= True)
+    per_return = models.FloatField(default = 0,blank =True,null= True)
+    bet_expiry_time = models.FloatField(default =7,blank =True,null= True)
+    closed_at = models.FloatField(default =8,blank =True,null= True)
+    results_at = models.FloatField(default =8.1,blank =True,null= True)
