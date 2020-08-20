@@ -278,8 +278,6 @@ class Stake (models.Model):
                         self.user_record_done = True
                 except:
                     pass
-                 
-                # self.analze_bets()
 
             except Exception as e:
                 return
@@ -372,9 +370,7 @@ class MarketInstance(models.Model):
     @property
     def offset(self):
         try:
-            _max = max(self.white_bet_amount ,self.black_bet_amount )
-            _min = min(self.white_bet_amount ,self.black_bet_amount)
-            return (_max -_min)
+            return abs(self.white_bet_amount - self.black_bet_amount)
 
         except Exception as e:
             return 0
@@ -477,7 +473,6 @@ class Result(TimeStamp):
                             amount= relief_amount
                             trans_type = 'Relief On LOSE'
                             self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)  
-  
                                                                                           
                     self.closed= True
 
@@ -492,7 +487,7 @@ class WhoWinsAlgo(object):
     def vfl_basic(self):
         pass
 
-        
+ 
 class BetSettingVar(TimeStamp):
     per_return = models.FloatField(default = 0,blank =True,null= True)
     bet_expiry_time = models.FloatField(default =7,blank =True,null= True)
