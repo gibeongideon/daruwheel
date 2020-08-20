@@ -49,7 +49,7 @@ class UserRecordView(APIView):
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = UserDetail.objects.all()
     serializer_class = UserProfileSerializer
 
 # class UserViewSet(viewsets.ModelViewSet):
