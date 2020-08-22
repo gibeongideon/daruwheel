@@ -4,7 +4,7 @@ from time import sleep
 import random
 
 def control():
-    id = 152
+    id = len(MarketInstance.objects.all())  + 1
     try:
         while True:
                 MarketInstance.objects.create(id = id)

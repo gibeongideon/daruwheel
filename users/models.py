@@ -109,7 +109,7 @@ class CashDeposit(TimeStamp):
 
             if not self.deposited:
                 try:
-                    Account.objects.get(user_id = self.user_depo_id) # if  Account matching query does not exist
+                    Account.objects.get(user_id = self.user_depo_id)  # if  Account matching query does not exist
                 except:
                     Account.objects.create(user_id = self.user_depo_id)  # create account
 
@@ -134,7 +134,7 @@ class CashDeposit(TimeStamp):
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
-    user_withr = models.ForeignKey(Account, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
+    user_withr = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
     amount = models.FloatField(max_length=10,default=0 ) 
     withrawned = models.BooleanField(blank= True,null =True)
     user_record_done = models.BooleanField(blank= True,null =True)
@@ -269,7 +269,6 @@ class Stake (models.Model):
                         self.current_bal = new_bal
                         Account.objects.filter(user_id=self.user_stake_id).update(balance= new_bal)
                         self.stake_placed = True
-
                 else:
                     return 'Not enough balance to stake'
 
@@ -401,7 +400,11 @@ class MarketInstance(models.Model):
         ''' Overrride internal model save method to update balance on staking  '''
         # if self.pk:
         try:
-            set_up = BetSettingVar.objects.get(id =1)# Set up variables
+            try:
+                set_up = BetSettingVar.objects.get(id =1)# Set up variables
+            except:
+                BetSettingVar.objects.update_or_create(id =1) # create if it doent exist
+                set_up = BetSettingVar.objects.get(id =1)
 
             self.bet_expiry_time = self.created_at + timedelta(minutes =set_up.bet_expiry_time)
             self.closed_at = self.created_at + timedelta(minutes = set_up.closed_at)
@@ -485,10 +488,6 @@ class Result(TimeStamp):
 
         # super().save(*args, **kwargs)
 
-class WhoWinsAlgo(object):
-
-    def vfl_basic(self):
-        pass
  
 class BetSettingVar(TimeStamp):
     per_return = models.FloatField(default = 0,blank =True,null= True)
