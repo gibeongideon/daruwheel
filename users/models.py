@@ -109,7 +109,7 @@ class CashDeposit(TimeStamp):
 
             if not self.deposited:
                 try:
-                    Account.objects.get(user_id = self.user_depo_id) # if  Account matching query does not exist
+                    Account.objects.get(user_id = self.user_depo_id)  # if  Account matching query does not exist
                 except:
                     Account.objects.create(user_id = self.user_depo_id)  # create account
 
@@ -134,7 +134,7 @@ class CashDeposit(TimeStamp):
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
-    user_withr = models.ForeignKey(Account, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
+    user_withr = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
     amount = models.FloatField(max_length=10,default=0 ) 
     withrawned = models.BooleanField(blank= True,null =True)
     user_record_done = models.BooleanField(blank= True,null =True)
