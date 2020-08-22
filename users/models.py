@@ -42,8 +42,6 @@ class Account(TimeStamp):
                 r_no = random.randint(1000,9999)
                 self.number = '666' + str(r_no) + str(self.user)
 
-            super().save(*args, **kwargs)
-
         except Exception as e :
             return e
 
@@ -70,14 +68,6 @@ class Balance (TimeStamp):
         except Exception as e:
             return e   
 
-    @property
-    def current_bal(self):
-        try:
-            ac_bal = Account.objects.get(user_id =self.user_depo).balance
-            return ac_bal
-        except Exception as e:
-            return e   
-
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         if not self.pk:
@@ -93,28 +83,39 @@ class Balance (TimeStamp):
 class CashDeposit(TimeStamp):
     user_depo = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
     amount = models.FloatField(max_length=10,default=0 ) 
+    source_no = models.IntegerField(blank =True ,null= True)
     deposited = models.BooleanField(blank =True ,null= True)
     user_record_done = models.BooleanField(blank =True ,null= True)
     
     def __str__(self):
         return str(self.amount)
-
+    
     @property
-    def current_bal(self):
+    def current_bal(self): 
         try:
             ac_bal = Account.objects.get(user_id =self.user_depo_id).balance
             return ac_bal
         except Exception as e:
-            return e   
+            return e
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
         try:
+            if not self.user_depo_id: # create  user on deposit  and account
+                created_user_name = str(self.source_no)
+                User.objects.create(username = created_user_name ,password ='27837185gg')
+                self.user_depo_id = User.objects.get(username = created_user_name).id
+
             if not self.deposited:
+                try:
+                    Account.objects.get(user_id = self.user_depo_id) # if  Account matching query does not exist
+                except:
+                    Account.objects.create(user_id = self.user_depo_id)  # create account
+
                 ctotal_balanc = Account.objects.get(user_id = self.user_depo_id).balance
                 new_bal = ctotal_balanc + self.amount
-                # self.current_bal = new_bal
+
                 Account.objects.filter(user_id=self.user_depo_id).update(balance= new_bal)
                 self.deposited = True
 
@@ -126,6 +127,7 @@ class CashDeposit(TimeStamp):
                 pass
             
         except Exception as e:
+            print('DEPOSIT ERROR',e)
             return e
 
         super().save(*args, **kwargs)
@@ -214,7 +216,6 @@ class Stake (models.Model):
     start_at = models.DateTimeField(auto_now_add=True,blank =True,null=True)
     ends_at = models.DateTimeField(auto_now=True,blank =True,null=True)
 
-    account_apdated = models.BooleanField(default= False)  # not needed
 
     stake_placed = models.BooleanField(blank =True,null=True)
     user_record_done = models.BooleanField(blank =True,null=True)
@@ -443,7 +444,7 @@ class Result(TimeStamp):
         ''' Overrride internal model save method to update balance on staking  '''
         self.resu = self.market.determine_result_algo
 
-        if not self.closed:
+        if  self.resu and  not self.closed:
             try:
                 for _stake in Stake.objects.filter(marketinstant = self.market).all(): 
                     user_id = _stake.user_stake_id
@@ -476,17 +477,18 @@ class Result(TimeStamp):
                                                                                           
                     self.closed= True
 
+                super().save(*args, **kwargs) #save only if 
+
             except Exception as e:
                 print('RRRRRR',e)
                 return
 
-        super().save(*args, **kwargs)
+        # super().save(*args, **kwargs)
 
 class WhoWinsAlgo(object):
 
     def vfl_basic(self):
         pass
-
  
 class BetSettingVar(TimeStamp):
     per_return = models.FloatField(default = 0,blank =True,null= True)

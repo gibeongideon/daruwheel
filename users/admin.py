@@ -32,7 +32,7 @@ admin.site.register(Balance, BalanceAdmin)
 
 
 class CashDepositAdmin(admin.ModelAdmin):
-    list_display = ('user_depo','deposited','user_record_done','amount','current_bal','created_at','updated_at')
+    list_display = ('user_depo','source_no','deposited','user_record_done','amount','current_bal','created_at','updated_at')
     list_display_links = ('amount',)
     search_fields = ('amount',)
     list_filter =('user_depo',)
@@ -51,7 +51,7 @@ class CashWithrawalAdmin(admin.ModelAdmin):
 admin.site.register(CashWithrawal, CashWithrawalAdmin)
 
 class StakeAdmin(admin.ModelAdmin):
-    list_display = ('id','user_stake','marketinstant','marketselection','account_bal','current_bal','amount','stake_placed','user_record_done','account_apdated','outcome','update_account_on_win_lose','place_bet_is_active','start_at','ends_at')
+    list_display = ('id','user_stake','marketinstant','marketselection','account_bal','current_bal','amount','stake_placed','user_record_done','outcome','update_account_on_win_lose','place_bet_is_active','start_at','ends_at')
     list_display_links = ('user_stake',)
     search_fields = ('user_stake',)
     # list_editable = ('outcome',)
