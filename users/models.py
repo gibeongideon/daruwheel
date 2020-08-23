@@ -203,7 +203,7 @@ class MarketSelection (models.Model):
         return f'Selection :{self.name} '
 
 
-class Stake (models.Model):
+class Stake (TimeStamp):
     user_stake = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_stakes',blank =True,null=True)
     # balanc = models.ForeignKey(Account, on_delete=models.CASCADE,related_name='sbalances')
     marketinstant = models.ForeignKey('MarketInstance', on_delete=models.CASCADE,related_name='marketinchoices')
@@ -212,9 +212,6 @@ class Stake (models.Model):
     amount = models.FloatField(max_length=10,default=0 ) 
 
     outcome = models.CharField(max_length=200,blank =True,null=True)
-
-    start_at = models.DateTimeField(auto_now_add=True,blank =True,null=True)
-    ends_at = models.DateTimeField(auto_now=True,blank =True,null=True)
 
 
     stake_placed = models.BooleanField(blank =True,null=True)
@@ -286,15 +283,11 @@ class Stake (models.Model):
 
 
 class MarketInstance(models.Model):
-    amount_stake_per_market = models.FloatField(max_length=100,blank =True,null=True)  # not needed
-
-    created_at = models.DateTimeField(default =datetime.now,blank =True,null=True)
-    bet_expiry_time = models.DateTimeField(blank =True,null=True)
-
-    closed_at =  models.DateTimeField(blank =True,null=True)
+    created_at = models.DateTimeField(default= datetime.now,blank =True,null=True)
+    closed_at = models.DateTimeField(blank =True,null=True)
     results_at =  models.DateTimeField(blank =True,null=True)
+
     updated_at = models.DateTimeField(auto_now=True,blank =True,null=True)
-    result = models.IntegerField(blank =True,null= True)
 
     closed = models.BooleanField(blank =True,null= True)
     
@@ -315,7 +308,7 @@ class MarketInstance(models.Model):
     def instance_is_active(self):
         try:
 
-            if datetime.now(timezone.utc) >  self.created_at and datetime.now(timezone.utc) < self.closed_at:
+            if datetime.now(timezone.utc) >  self.created_at and datetime.now(timezone.utc) < self.results_at:
                 return True
             return False
         except Exception as e:
@@ -326,7 +319,7 @@ class MarketInstance(models.Model):
     def place_stake_is_active(self):
         try:
 
-            if datetime.now(timezone.utc) <  self.bet_expiry_time and self.instance_is_active:
+            if datetime.now(timezone.utc) >  self.created_at and datetime.now(timezone.utc) < self.closed_at:
                 return True
             return False
         except Exception as e:
@@ -338,7 +331,6 @@ class MarketInstance(models.Model):
         try:
 
             total_amount = Stake.objects.filter(marketinstant_id = self.id ).aggregate(bet_amount =Sum('amount'))
-            self.amount_stake_per_market = total_amount.get('bet_amount')
             return  total_amount.get('bet_amount')
 
         except Exception as e:
@@ -406,7 +398,6 @@ class MarketInstance(models.Model):
                 BetSettingVar.objects.update_or_create(id =1) # create if it doent exist
                 set_up = BetSettingVar.objects.get(id =1)
 
-            self.bet_expiry_time = self.created_at + timedelta(minutes =set_up.bet_expiry_time)
             self.closed_at = self.created_at + timedelta(minutes = set_up.closed_at)
             self.results_at = self.created_at + timedelta(minutes =set_up.results_at)
 
@@ -458,7 +449,7 @@ class Result(TimeStamp):
 
                         if user_stake.marketselection_id == self.resu:
                             new_bal = ctotal_balanc + amount*2 
-                            amount = amount*2
+                            amount = round(amount*2)
                             trans_type = 'WIN' 
                             self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)
 
@@ -474,7 +465,7 @@ class Result(TimeStamp):
 
                             relief_amount = self.per_return(all_gain,userstake,all_lose_stake,per_to_return)
                             new_bal = ctotal_balanc + relief_amount
-                            amount= relief_amount
+                            amount= round(relief_amount,1)
                             trans_type = 'Relief On LOSE'
                             self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)  
                                                                                           
@@ -483,7 +474,6 @@ class Result(TimeStamp):
                 super().save(*args, **kwargs) #save only if 
 
             except Exception as e:
-                print('RRRRRR',e)
                 return
 
         # super().save(*args, **kwargs)
@@ -491,6 +481,5 @@ class Result(TimeStamp):
  
 class BetSettingVar(TimeStamp):
     per_return = models.FloatField(default = 0,blank =True,null= True)
-    bet_expiry_time = models.FloatField(default =7,blank =True,null= True)
     closed_at = models.FloatField(default =8,blank =True,null= True)
     results_at = models.FloatField(default =8.1,blank =True,null= True)

@@ -1,25 +1,21 @@
 
-from users.models import MarketInstance ,Result
+from users.models import MarketInstance ,Result,BetSettingVar
 from time import sleep
 import random
 
 def control():
-    id = len(MarketInstance.objects.all())  + 1
+    id = max([MarketInstance.objects.get(id =obj.id).id for obj in MarketInstance.objects.all()]) + 1
     try:
         while True:
+                sleep_time = BetSettingVar.objects.get(id =1).results_at
                 MarketInstance.objects.create(id = id)
-                sleep((8.5*60))
+                print('Market Instance Created')
+                print(f'SLEEP TIME:{sleep_time}')
+                sleep((sleep_time*60))
                 print('getting  BACKGROUNG results')
-                sleep(2)
-                resu = MarketInstance.objects.get(id = id).determine_result_algo
-                if resu =='R':
-                    resu = random.randint(1,2)
-                    print('R RESU',resu)
-
-                print('RESSU',resu)
-                sleep((30))
-                Result.objects.create(market_id = id ,resu =resu ,cumgain_id = 1)  #  updates accounts for win lose
-                sleep(1) # 5 SEC
+                sleep((10))
+                Result.objects.create(market_id = id )  #  updates accounts for win lose
+                sleep(1)  # 5 SEC
                 id =id +1
 
     except Exception as e:
