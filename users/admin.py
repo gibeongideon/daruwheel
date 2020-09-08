@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import *
 
 class UserDetailAdmin(admin.ModelAdmin):
-    list_display = ('user', 'mobile_no',)
+    list_display = ('user', 'phone_number',)
     list_display_links = ('user',)
     search_fields = ('user',)
     ordering = ('user',)

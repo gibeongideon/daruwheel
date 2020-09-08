@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken import views
-from mpesa.urls import mpesa_urls
+from mpesa.urls import mpesa_urls  #  No module named 'requests
 
-admin.site.site_header = 'SpinPesa Admin'
-admin.site.index_title = 'SpinPesa Modules'
+admin.site.site_header = 'StackCash  Admin'
+# admin.site.index_title = 'SpinPesa Modules'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('users.urls',namespace='users')),

@@ -15,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            'id',
             'username',
             'first_name',
             'last_name',
@@ -91,10 +92,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    autogen_account_no = serializers.IntegerField(read_only=True)
     class Meta:
         model = Account
-        fields = ('user','number','timestamp',  'active','autogen_account_no')
+        fields = ('user','balance',)
         read_only_fields = ('active', 'is_staff')
 
 
@@ -117,4 +117,4 @@ class StakeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stake
         # fields = ('__all__')
-        fields = ('user_stake','marketinstant','marketselection','amount','update_account_on_win_lose',)
+        fields = ('user_stake','marketinstant','marketselection','amount',)

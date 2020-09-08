@@ -1,12 +1,14 @@
-#  Copyright August 2020 gideongibeon. All rights reserved.
-#  Use of this source code is governed by a BSD-style license that can be
-#  found in the LICENSE file.
+
+#  Author: gideon gibeon <kipngeno.gibeon@gmail.com>
+
+
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Sum ,Count, Sum, F ,OuterRef
 from datetime import datetime, timedelta ,timezone
+from random import randint
 
 
 class TimeStamp(models.Model):
@@ -19,7 +21,7 @@ class TimeStamp(models.Model):
 
 class UserDetail(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='users',blank =True,null=True)
-    mobile_no = models.CharField(max_length=10, blank=True,null=True)
+    phone_number = models.CharField(max_length=30, unique = True)
 
     def __str__(self):
         return self.user.username
@@ -27,7 +29,7 @@ class UserDetail(TimeStamp):
 class Account(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     number = models.CharField(max_length =200,blank=True,null=True)
-    balance =models.FloatField(default = 0)
+    balance =models.DecimalField(max_digits=12, decimal_places=2, default=0)
     active = models.BooleanField(default= True)
 
     def __str__(self): 
@@ -37,24 +39,21 @@ class Account(TimeStamp):
 
         try:
             UserDetail.objects.update_or_create(user_id = self.user_id)
-            if not self.number:
-                import random
-                r_no = random.randint(1000,9999)
-                self.number = '666' + str(r_no) + str(self.user)
 
         except Exception as e :
+            print(f'ACCOUNT:{e}')
             return e
 
         super().save(*args, **kwargs)
-
+    
     class Meta:
         ordering = ('user_id',)
         # unique_together = (['user', 'number',])
-
+    
 class Balance (TimeStamp):
     user_bal = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
-    amount = models.FloatField(max_length=100,default = 0)
-    now_bal = models.FloatField(max_length=100,default = 0)
+    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    now_bal = models.DecimalField(('now_bal'), max_digits=12, decimal_places=2, default=0)
     trans_type = models.CharField(max_length=200 ,blank =True,null=True)
     
     def __str__(self):
@@ -82,7 +81,7 @@ class Balance (TimeStamp):
 
 class CashDeposit(TimeStamp):
     user_depo = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
-    amount = models.FloatField(max_length=10,default=0 ) 
+    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     source_no = models.IntegerField(blank =True ,null= True)
     deposited = models.BooleanField(blank =True ,null= True)
     user_record_done = models.BooleanField(blank =True ,null= True)
@@ -127,15 +126,15 @@ class CashDeposit(TimeStamp):
                 pass
             
         except Exception as e:
-            print('DEPOSIT ERROR',e)
-            return e
+            print('DEPOSIT ERROR',e)#  issue to fix on mpesa deposit error
+            return
 
         super().save(*args, **kwargs)
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
     user_withr = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
-    amount = models.FloatField(max_length=10,default=0 ) 
+    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0) 
     withrawned = models.BooleanField(blank= True,null =True)
     user_record_done = models.BooleanField(blank= True,null =True)
     # charges_fee = models.FloatField(default =0 ,blank = True,null= true)
@@ -188,6 +187,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
                         pass
 
             except Exception as e:
+                print(f'CashWithRawal:{e}')
                 return  # incase of error /No withrawing should happen
                 # pass
 
@@ -209,7 +209,7 @@ class Stake (TimeStamp):
     marketinstant = models.ForeignKey('MarketInstance', on_delete=models.CASCADE,related_name='marketinchoices')
     marketselection = models.ForeignKey(MarketSelection, on_delete=models.CASCADE,related_name='marketselections',blank =True,null=True)
     current_bal = models.FloatField(max_length=10,default=0 )
-    amount = models.FloatField(max_length=10,default=0 ) 
+    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
 
     outcome = models.CharField(max_length=200,blank =True,null=True)
 
@@ -277,7 +277,7 @@ class Stake (TimeStamp):
                     pass
 
             except Exception as e:
-                return
+                return f'STAKE:{e}'
 
             super().save(*args, **kwargs)
 
@@ -370,9 +370,9 @@ class MarketInstance(models.Model):
     @property
     def gain_after_relief(self):
         per_to_return = BetSettingVar.objects.get(id = 1).per_return
-        return ((100 - per_to_return)/100)*self.offset
+        return ((100 - per_to_return)/100)*float(self.offset)
 
-    @property
+    # @property
     def determine_result_algo(self):  # fix this
         try:
             B = self.black_bet_amount
@@ -380,7 +380,7 @@ class MarketInstance(models.Model):
             
             if self.instance_is_active == False:
                 if B == W:
-                    return 'R' # fix me to get random 1 or 2
+                    return randint(1,2) # fix me to get random 1 or 2
                 if B > W :
                     return 2
                 return 1
@@ -402,7 +402,8 @@ class MarketInstance(models.Model):
             self.results_at = self.created_at + timedelta(minutes =set_up.results_at)
 
         except Exception as e:
-            return e
+            print(f'MRKTINSTS:{e}')
+            return 
 
         super().save(*args, **kwargs) 
 
@@ -421,22 +422,35 @@ class Result(TimeStamp):
     market = models.OneToOneField(MarketInstance,on_delete=models.CASCADE,related_name='rmarkets',blank =True,null= True)
     cumgain = models.ForeignKey(CumulativeGain,on_delete=models.CASCADE,related_name='gains',blank =True,null= True)
 
-    resu = models.FloatField(blank =True,null= True)
+    resu = models.IntegerField(blank =True,null= True)
     closed = models.BooleanField(blank =True,null= True)
     
 
     def per_return(self,all_gain,user_stake,all_lose_stake,per_to_return):
-        return_amount = (per_to_return/100)*all_gain
-        per_user_return = (user_stake/all_lose_stake)*return_amount
-        return per_user_return
+        try:
+
+            return_amount = (per_to_return/100)*all_gain
+            per_user_return = (user_stake/all_lose_stake)*return_amount
+            return per_user_return
+        except Exception as e:
+            print('RESUUUU111',e)
+            return 50
 
     def update_acc_n_bal_record(self,user_id,new_bal,amount,trans_type):
-        Account.objects.filter(user_id =user_id).update(balance= new_bal)
-        Balance.objects.create(user_bal_id =user_id,amount= amount ,trans_type = trans_type) 
-    
+        try:
+            print('NEW BAL',new_bal)
+            print(f'ID{user_id}')
+            
+                
+            Account.objects.filter(user =user_id).update(balance= new_bal)
+            Balance.objects.create(user_bal_id =user_id,amount= amount ,trans_type = trans_type)
+
+        except Exception as e:
+            print('RESUUUUp',e)
+        
     def save(self, *args, **kwargs):  
         ''' Overrride internal model save method to update balance on staking  '''
-        self.resu = self.market.determine_result_algo
+        self.resu = self.market.determine_result_algo()
 
         if  self.resu and  not self.closed:
             try:
@@ -444,8 +458,8 @@ class Result(TimeStamp):
                     user_id = _stake.user_stake_id
 
                     for  user_stake in Stake.objects.filter(id = _stake.id ): # 
-                        ctotal_balanc = Account.objects.get(user_id = user_id).balance
-                        amount = user_stake.amount
+                        ctotal_balanc = float(Account.objects.get(user_id = user_id).balance)
+                        amount = float(user_stake.amount)
 
                         if user_stake.marketselection_id == self.resu:
                             new_bal = ctotal_balanc + amount*2 
@@ -455,13 +469,13 @@ class Result(TimeStamp):
 
                         elif user_stake.marketselection_id != self.resu:
                             all_gain = self.market.offset
-                            userstake =  user_stake.amount
+                            userstake =  float(user_stake.amount)
                             if self.resu == 2:
                                 all_lose_stake = self.market.black_bet_amount
                             elif self.resu ==1:
                                 all_lose_stake =self.market.white_bet_amount
 
-                            per_to_return = BetSettingVar.objects.get(id = 1).per_return # 
+                            per_to_return = float(BetSettingVar.objects.get(id = 1).per_return) # 
 
                             relief_amount = self.per_return(all_gain,userstake,all_lose_stake,per_to_return)
                             new_bal = ctotal_balanc + relief_amount
@@ -474,6 +488,7 @@ class Result(TimeStamp):
                 super().save(*args, **kwargs) #save only if 
 
             except Exception as e:
+                print('RESULT:',e)
                 return
 
         # super().save(*args, **kwargs)

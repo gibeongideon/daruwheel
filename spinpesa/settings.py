@@ -25,7 +25,7 @@ SECRET_KEY = 'i#r2p5_12xnuojmk)@$$ix78r^b=f__@vf*tw4nv665-yo14)j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -61,9 +61,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-       'rest_framework.permissions.IsAuthenticated',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #    'rest_framework.permissions.IsAuthenticated',
+    # ],
 }
 
 ROOT_URLCONF = 'spinpesa.urls'
