@@ -1,8 +1,3 @@
-# from django.shortcuts import render
-# from django.contrib.auth.models import User
-# from rest_framework.views import APIView
-# from django.contrib.auth.models import User
-
 from users.serializers import *
 from rest_framework import viewsets
 from .models import *
@@ -14,7 +9,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser
 from django.contrib.auth.models import User
-
+from django.http import HttpResponse, Http404
+from rest_framework import generics #, permissions, viewsets, serializers, permissions, filters, status
 
 class UserRecordView(APIView):
     """
@@ -69,3 +65,22 @@ class MarketInstanceViewSet(viewsets.ModelViewSet):
 class StakeViewSet(viewsets.ModelViewSet):
     queryset = Stake.objects.all()
     serializer_class = StakeSerializer
+
+
+class BalanceViewSet(viewsets.ModelViewSet):
+    queryset = Balance.objects.all()
+    serializer_class = BalanceSerializer
+
+    search_fields = ('user_bal', )
+
+class TransactionView(APIView):
+    """
+    API View to get a list of all the Balances for Balances
+    """
+    # permission_classes = [IsAdminUser]
+
+    def get(self,request,pk, format=None):
+        trans = Balance.objects.filter(user_bal= pk)
+        serializer = BalanceSerializer(trans,many=True)
+        return Response(serializer.data) 
+

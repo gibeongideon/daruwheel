@@ -118,3 +118,13 @@ class StakeSerializer(serializers.ModelSerializer):
         model = Stake
         # fields = ('__all__')
         fields = ('user_stake','marketinstant','marketselection','amount',)
+
+
+class BalanceSerializer(serializers.ModelSerializer):
+    """
+    A Balance serializer to return Balance details
+    """
+    class Meta:
+        model = Balance
+        # fields = ('__all__')
+        fields = ('user_bal','amount','now_bal','trans_type')

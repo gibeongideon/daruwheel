@@ -97,6 +97,18 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': config('NAME'),
+#             'USER': config('USER'),
+#             'PASSWORD': config('PASSWORD'),
+#             'HOST': config('HOST'),
+#             'PORT': config('PORT'),
+#         }
+#     }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -122,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
