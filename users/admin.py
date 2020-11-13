@@ -22,7 +22,7 @@ admin.site.register(Account, AccountAdmin)
 
 
 class BalanceAdmin(admin.ModelAdmin):
-    list_display = ('user_bal','account_bal','amount','now_bal','trans_type','created_at','updated_at')
+    list_display = ('id','user_bal','account_bal','amount','now_bal','trans_type','created_at','updated_at')
     list_display_links = ('user_bal',)
     search_fields = ('user_bal',)
     list_filter =('user_bal',)
@@ -51,7 +51,7 @@ class CashWithrawalAdmin(admin.ModelAdmin):
 admin.site.register(CashWithrawal, CashWithrawalAdmin)
 
 class StakeAdmin(admin.ModelAdmin):
-    list_display = ('id','user_stake','marketinstant','marketselection','account_bal','current_bal','amount','stake_placed','user_record_done','outcome','update_account_on_win_lose','place_bet_is_active','created_at','updated_at')
+    list_display = ('id','user_stake','marketinstant','marketselection','mrkt_selection','account_bal','current_bal','amount','stake_placed','user_record_done','outcome','update_account_on_win_lose','place_bet_is_active','created_at','updated_at')
     list_display_links = ('user_stake',)
     search_fields = ('user_stake',)
     # list_editable = ('outcome',)
@@ -72,7 +72,7 @@ admin.site.register(MarketSelection, MarketSelectionAdmin)
 
 
 class MarketInstanceAdmin(admin.ModelAdmin):
-    list_display = ('id','closed','created_at','closed_at','results_at','updated_at','total_bet_amount_per_marktinstance','black_bet_amount','white_bet_amount','offset','gain_after_relief','determine_result_algo','place_stake_is_active','instance_is_active','get_result_active',)
+    list_display = ('id','closed','created_at','closed_at','results_at','updated_at','total_bet_amount_per_marktinstance','black_bet_amount','white_bet_amount','offset','gain_after_relief','place_stake_is_active','instance_is_active','get_result_active',)
     list_display_links = ('id',)
     #list_editable = ('place_stake_is_active',)
     # list_editable = ('closed',)
@@ -91,7 +91,7 @@ admin.site.register(CumulativeGain, CumulativeGainAdmin)
 
 
 class ResultAdmin(admin.ModelAdmin):
-    list_display = ('id','closed','market','resu','created_at','updated_at',)
+    list_display = ('id','closed','market','resu','gain','cumgain','created_at','updated_at',)
     list_display_links = ('id',)
     # list_editable = ('closed',)
 
@@ -100,9 +100,9 @@ admin.site.register(Result, ResultAdmin)
 
 
 class BetSettingVarAdmin(admin.ModelAdmin):
-    list_display = ('id','per_return','closed_at','results_at','created_at','updated_at',)
+    list_display = ('id','per_retun','closed_at','results_at','created_at','updated_at',)
     list_display_links = ('id',)
-    list_editable = ('per_return','closed_at','results_at')
+    list_editable = ('per_retun','closed_at','results_at')
 
 
 admin.site.register(BetSettingVar, BetSettingVarAdmin) 
