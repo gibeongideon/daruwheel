@@ -117,7 +117,7 @@ class StakeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stake
         # fields = ('__all__')
-        fields = ('user_stake','marketinstant','marketselection','amount',)
+        fields = ('user_stake','marketinstant','marketselection','mrkt_selection','amount',)
 
 
 class BalanceSerializer(serializers.ModelSerializer):
@@ -126,5 +126,5 @@ class BalanceSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Balance
-        # fields = ('__all__')
-        fields = ('user_bal','amount','now_bal','trans_type')
+        #fields = ('__all__')
+        fields = ('id','amount','now_bal','trans_type')

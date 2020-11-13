@@ -32,7 +32,7 @@ def control():
 
                 print('getting  BACKGROUNG results')
                 sleep((5))
-                Result.objects.create(market_id = id,cumgain_id =1 )  #  updates accounts for win lose
+                Result.objects.create(market_id = id )  #  updates accounts for win lose
 
                 id =id +1
 
@@ -40,4 +40,6 @@ def control():
         print('CONTROL ERROR',e)
         return e
 
-control()
+
+if __name__ == "__main__":
+    control()

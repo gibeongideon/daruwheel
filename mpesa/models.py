@@ -48,6 +48,7 @@ class PaymentTransaction(models.Model):
         return user_id
 
     def create_user(self): # TODO # create actual user that can log in#still a challenge
+        print('HEY HEY HEY')
         created_user_name = str(self.phone_number)
         User.objects.create(username = created_user_name ,password ='27837185gg')
         # self.user_depo_id = User.objects.get(username = created_user_name).id
@@ -69,15 +70,17 @@ class PaymentTransaction(models.Model):
         try:
             try:
                 Account.objects.get(user_id = self.user_id)
-            except:
-                Account.objects.create(user_id = self.user_id)  # create account
+            except Exception as e:
+                print('ACCCRtrans',e)
+                Account.objects.update_or_create (user_id = self.user_id)  # create account
 
             ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
             new_bal = ctotal_balanc + self.amount
 
             Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
          
-        except:
+        except Exception as e:
+            print('TRANS Account update issue',e)
             pass
 
     def create_bal_record(self,destin):
@@ -90,7 +93,7 @@ class PaymentTransaction(models.Model):
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
-        self.closed = True if self.isFinished and self.isSuccessFull else False # need else realy?
+        # 
         
         try:
             if not self.closed:
@@ -100,19 +103,23 @@ class PaymentTransaction(models.Model):
                 except Exception as e:
                     print ('account update fails',e)  #what is this for //raise stuff man
                     pass #continue
-                try:
-                    self.updateWallet()
-                    self.create_bal_record('Wallet')
+                # try:
+                #     self.updateWallet()
+                #     self.create_bal_record('Wallet')
 
-                except Exception as e:
-                    print ('wallet update fails',e)  #what is this for 
-                    pass #continue
+                # except Exception as e:
+                #     print ('wallet update fails',e)  #what is this for 
+                #     pass #continue
+
+                self.closed = True if self.isFinished and self.isSuccessFull else False # need else realy?
+
+            super().save(*args, **kwargs)
             
         except Exception as e:
             print('TRANSACTION ERROR',e)
             return e
 
-        super().save(*args, **kwargs)
+        
 
 
 
