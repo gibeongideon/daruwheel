@@ -1,12 +1,10 @@
 
 #  Author: gideon gibeon <kipngeno.gibeon@gmail.com>
 
-
-
 from django.db import models
 from django.contrib.auth.models import User
-from django.db import transaction
-from django.db.models import Sum ,Count, Sum, F ,OuterRef
+# from django.db import transaction
+from django.db.models import Sum #,Count, Sum, F ,OuterRef
 from datetime import datetime, timedelta #,timezone
 from random import randint
 from django.utils import timezone
@@ -23,47 +21,143 @@ class TimeStamp(models.Model):
 class UserDetail(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='users',blank =True,null=True)
     phone_number = models.CharField(max_length=30,blank =True,null=True)
+    refer_code = models.CharField(max_length=30,blank =True,null=True)
+    own_refer_code = models.CharField(max_length=30,blank =True,null=True)
 
     def __str__(self):
-        return self.user.username
-
-class Account(TimeStamp):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
-    number = models.CharField(max_length =200,blank=True,null=True)
-    balance =models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    active = models.BooleanField(default= True)
-
-    def __str__(self): 
-        return f'Account No: {self.number} Balance: {self.balance}'
+        return f'{self.user}'
 
     def save(self, *args, **kwargs):
 
         try:
-            UserDetail.objects.update_or_create(user_id = self.user_id)
+            if not self.own_refer_code:
+                self.own_refer_code = randint(10000,99999)
 
         except Exception as e :
             print(f'ACCOUNT:{e}')
             return e
 
         super().save(*args, **kwargs)
+
+
+
+
+class Account(TimeStamp):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
+    # number = models.CharField(max_length =200,blank=True,null=True)# not
+    balance =models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    # refer_code = models.CharField(max_length=30,blank =True,null=True) 
+    active = models.BooleanField(default= True)
+
+    def __str__(self): 
+        return f'Account No: {self.user} Balance: {self.balance}'
+
+    # def save(self, *args, **kwargs):
+
+    #     try:
+    #         UserDetail.objects.update_or_create(user_id = self.user_id) # REMOVE
+
+
+    #     except Exception as e :
+    #         print(f'ACCOUNT:{e}')
+    #         return e
+
+    #     super().save(*args, **kwargs)
     
     class Meta:
         ordering = ('user_id',)
         # unique_together = (['user', 'number',])
+
+
+class RefAccountCredit(TimeStamp):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
+    amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    current_bal =  models.DecimalField(max_digits=12, decimal_places=2,blank =True,null=True)
+    closed = models.BooleanField(blank =True ,null= True)
+    has_record = models.BooleanField(blank =True ,null= True)
+
     
-class Balance (TimeStamp):
-    user_bal = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
+    def save(self, *args, **kwargs):
+
+        ''' Overrride internal model save method to update balance on staking  '''
+        # if not self.closed:
+        try:
+            if not self.closed:
+                # try:
+                #     Account.objects.update_or_create(user_id=self.user_id)
+                # except Exception as e:
+                    
+                #     print(e)
+                #     pass
+
+                refer_balanc= float(Account.objects.get(user_id = self.user_id).refer_balance)
+                # min_redeem = 1000#settings
+                min_redeem = BetSettingVar.objects.get(id=1).min_redeem_refer_credit 
+
+                if refer_balanc < min_redeem:
+                    try:
+
+                        new_bal = refer_balanc + float(self.amount)
+                        self.current_bal = new_bal
+                        Account.objects.filter(user_id= self.user_id).update(refer_balance= new_bal)
+                        self.closed = True
+                        
+                    except Exception as e:
+                        pass
+                        print(e,'Redeam Error 1')
+                    
+
+                elif refer_balanc >min_redeem:
+                    try:
+
+                        main_balance= float(Account.objects.get(user_id = self.user_id).balance)
+                        main_new_bal = refer_balanc + main_balance
+
+                        Account.objects.filter(user_id= self.user_id).update(refer_balance= 0)
+                        Account.objects.filter(user_id= self.user_id).update(balance= main_new_bal)
+             
+                        TransactionLog.objects.create(user_id =self.user_id,amount= refer_balanc ,trans_type = 'RDM')
+
+                        self.closed = True
+
+                    except Exception as e:
+                        print(e,'Redeam error 2')
+                        pass
+                    self.closed = True
+                
+
+            try:
+                if not self.has_record:
+                    TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'RC')
+                    self.has_record = True
+            except Exception as e:
+                print('has Record err',e)
+                pass
+
+        except Exception as e:
+            print(f'RefAccountCredit:{e}')
+            return 
+
+        super().save(*args, **kwargs)
+
+
+
+class TransactionLog(TimeStamp):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     now_bal = models.DecimalField(('now_bal'), max_digits=12, decimal_places=2, default=0)
     trans_type = models.CharField(max_length=200 ,blank =True,null=True)
     
     def __str__(self):
-        return f'User {self.user_bal}:{self.amount}'
+        return f'User {self.user}:{self.amount}'
+    class Meta:
+        ordering = ('-created_at',)
 
     @property
     def account_bal(self):
         try:
-            ac_bal = Account.objects.get(user_id =self.user_bal_id).balance
+            ac_bal = Account.objects.get(user_id =self.user_id).balance
             return ac_bal
         except Exception as e:
             return e   
@@ -81,11 +175,11 @@ class Balance (TimeStamp):
 
 
 class CashDeposit(TimeStamp):
-    user_depo = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     source_no = models.IntegerField(blank =True ,null= True)
     deposited = models.BooleanField(blank =True ,null= True)
-    user_record_done = models.BooleanField(blank =True ,null= True)
+    has_record = models.BooleanField(blank =True ,null= True)
     
     def __str__(self):
         return str(self.amount)
@@ -93,7 +187,7 @@ class CashDeposit(TimeStamp):
     @property
     def current_bal(self): 
         try:
-            ac_bal = Account.objects.get(user_id =self.user_depo_id).balance
+            ac_bal = Account.objects.get(user_id =self.user_id).balance
             return ac_bal
         except Exception as e:
             return e
@@ -102,27 +196,29 @@ class CashDeposit(TimeStamp):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
         try:
-            if not self.user_depo_id: # create  user on deposit  and account
+            if not self.user_id: # create  user on deposit  and account
+            
                 created_user_name = str(self.source_no)
-                User.objects.create(username = created_user_name ,password ='27837185gg')
-                self.user_depo_id = User.objects.get(username = created_user_name).id
+                User.objects.create_user(username = created_user_name ,password ='27837185gg') # FIXED with create_user instead of create
+                self.user_id = User.objects.get(username = created_user_name).id
 
             if not self.deposited:
                 try:
-                    Account.objects.get(user_id = self.user_depo_id)  # if  Account matching query does not exist
+                    Account.objects.get(user_id = self.user_id)  # if  Account matching query does not exist
                 except:
-                    Account.objects.create(user_id = self.user_depo_id)  # create account
+                    Account.objects.create(user_id = self.user_id)  # create account
+                    UserDetail.objects.update_or_create(user_id = self.user_id) # update user details
 
-                ctotal_balanc = Account.objects.get(user_id = self.user_depo_id).balance
+                ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
                 new_bal = ctotal_balanc + self.amount
 
-                Account.objects.filter(user_id=self.user_depo_id).update(balance= new_bal)
+                Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
                 self.deposited = True
 
             try:
-                if not self.user_record_done:
-                    Balance.objects.create(user_bal_id =self.user_depo_id,amount= self.amount ,trans_type = 'Deposit')
-                    self.user_record_done = True
+                if not self.has_record:
+                    TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Deposit')
+                    self.has_record = True
             except  Exception as e:
                 pass
             
@@ -134,10 +230,10 @@ class CashDeposit(TimeStamp):
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
-    user_withr = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0) 
     withrawned = models.BooleanField(blank= True,null =True)
-    user_record_done = models.BooleanField(blank= True,null =True)
+    has_record = models.BooleanField(blank= True,null =True)
     # charges_fee = models.FloatField(default =0 ,blank = True,null= true)
 
     def __str__(self):
@@ -146,7 +242,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     @property
     def current_bal(self):
         try:
-            ac_bal = Account.objects.get(user_id =self.user_withr_id).balance
+            ac_bal = Account.objects.get(user_id =self.user_id).balance
             return ac_bal
         except Exception as e:
             return e  
@@ -162,28 +258,28 @@ class CashWithrawal(TimeStamp): # sensitive transaction
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
-        account_is_active = Account.objects.get(user_id = self.user_withr_id).active
+        account_is_active = Account.objects.get(user_id = self.user_id).active
         # withraw if 
         if account_is_active:# withraw cash ! or else no cash!
             # if self.pk:
             try:
                 if not self.withrawned:# withraw cash ! no repeated withraws!
-                    ctotal_balanc = Account.objects.get(user_id = self.user_withr_id).balance
+                    ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
                     charges_fee = self.charges_fee
 
                     if ctotal_balanc > ( self.amount + charges_fee):
                         new_bal = ctotal_balanc - self.amount - charges_fee
                         # self.current_bal = new_bal
-                        Account.objects.filter(user_id=self.user_withr_id).update(balance= new_bal)
+                        Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
                         self.withrawned = True # transaction done
 
                     else:
                         return 'insufficient funds in your account'
                         
                     try:
-                        if not  self.user_record_done:
-                            Balance.objects.create(user_bal_id =self.user_withr_id,amount= self.amount ,trans_type = 'Withrawal')
-                            self.user_record_done = True
+                        if not  self.has_record:
+                            TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Withrawal')
+                            self.has_record = True
                     except:
                         pass
 
@@ -205,7 +301,7 @@ class MarketSelection (models.Model):
 
 
 class Stake (TimeStamp):
-    user_stake = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_stakes',blank =True,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_stakes',blank =True,null=True)
     # balanc = models.ForeignKey(Account, on_delete=models.CASCADE,related_name='sbalances')
     marketinstant = models.ForeignKey('MarketInstance', on_delete=models.CASCADE,related_name='marketinchoices')
     marketselection = models.ForeignKey(MarketSelection, on_delete=models.CASCADE,related_name='marketselections',blank =True,null=True)
@@ -230,18 +326,17 @@ class Stake (TimeStamp):
 
     outcome = models.CharField(max_length=200,blank =True,null=True)
 
-
     stake_placed = models.BooleanField(blank =True,null=True)
-    user_record_done = models.BooleanField(blank =True,null=True)
+    has_record = models.BooleanField(blank =True,null=True)
 
 
     def __str__(self):
-        return f'Stake:{self.amount} for:{self.user_stake}'   
+        return f'Stake:{self.amount} for:{self.user}'   
 
     @property
     def account_bal(self):
         try:
-            ac_bal = Account.objects.get(user_id =self.user_stake_id).balance
+            ac_bal = Account.objects.get(user_id =self.user_id).balance
             return ac_bal
         except Exception as e:
             return e   
@@ -276,20 +371,20 @@ class Stake (TimeStamp):
         ''' Overrride internal model save method to update balance on staking  '''
         if self.place_bet_is_active:
             try:
-                ctotal_balanc = Account.objects.get(user_id = self.user_stake_id).balance
+                ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
                 if self.amount <= ctotal_balanc:
                     if not self.stake_placed:
                         new_bal = ctotal_balanc - self.amount
                         self.current_bal = new_bal
-                        Account.objects.filter(user_id=self.user_stake_id).update(balance= new_bal)
+                        Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
                         self.stake_placed = True
                 else:
                     return 'Not enough balance to stake'
 
                 try:
-                    if not  self.user_record_done:
-                        Balance.objects.create(user_bal_id =self.user_stake_id,amount= self.amount ,trans_type = 'Stake')
-                        self.user_record_done = True
+                    if not  self.has_record:
+                        TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Stake')
+                        self.has_record = True
                 except:
                     pass
 
@@ -406,7 +501,7 @@ class MarketInstance(models.Model):
             return abs(self.white_bet_amount - self.black_bet_amount)
 
         except Exception as e:
-            return 0
+            return e
     @property
     def gain_after_relief(self):
         per_to_return = BetSettingVar.objects.get(id = 1).per_retun
@@ -436,10 +531,10 @@ class MarketInstance(models.Model):
 
 
 
-def per_returnn(self,all_gain,user_stake,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
+def per_returnn(self,all_gain,user,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
     try:
         return_amount = (per_to_return/100)*all_gain
-        per_user_return = (user_stake/all_lose_stake)*return_amount
+        per_user_return = (user/all_lose_stake)*return_amount
         return per_user_return
 
     except Exception as e:
@@ -476,23 +571,59 @@ class Result(TimeStamp):
         except Exception as e:
             return  e
 
-    
 
-    def per_returnn(self,all_gain,user_stake,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
+
+    def per_returnn(self,all_gain,user,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
         try:
             return_amount = (per_to_return/100)*all_gain
-            per_user_return = (user_stake/all_lose_stake)*return_amount
+            per_user_return = (user/all_lose_stake)*return_amount
             return per_user_return
 
         except Exception as e:
             print('RESUUUU111',e)
             return 50
 
+    def update_reference_account(self,user_id,ref_credit,trans_type):
+        print(user_id,ref_credit,trans_type)
+
+        try:
+            user_details = UserDetail.objects.filter(user_id = user_id)
+            print('USER DETAILS',user_details)
+
+            for  user_detail in user_details:
+                refer_code = user_detail.refer_code
+                print(f'referCODE{refer_code}')
+
+                # if refer_code:
+                referer_details = UserDetail.objects.filter(own_refer_code = refer_code)
+                print(f'referer details:{referer_details}')
+                try:
+
+                    for referer_detail in referer_details:
+                        r_user_id = referer_detail.user_id
+                        print(r_user_id,'userIDDS')
+                        RefAccountCredit.objects.create(user_id = r_user_id, amount= ref_credit)
+                except Exception as e:
+                    print ('REF',e)
+
+
+                    # ref_account_bal = float(Account.obje  cts.get(user_id = r_user_id).refer_balance)
+                # new
+            # else:
+                # pass
+                    # RefAccountCredit.objects.create(user_id = 1, amount= ref_credit)# ADMIN id 1
+        except Exception as e:
+
+            print('REFER E',e)
+
+            
+
+
     def update_acc_n_bal_record(self,user_id,new_bal,amount,trans_type):
         try:
                        
             Account.objects.filter(user =user_id).update(balance= new_bal)
-            Balance.objects.create(user_bal_id =user_id,amount= amount ,trans_type = trans_type)
+            TransactionLog.objects.create(user_id =user_id,amount= amount ,trans_type = trans_type)
 
         except Exception as e:
             print('RESUUUUp',e)
@@ -503,22 +634,33 @@ class Result(TimeStamp):
             try:
                 all_stakes_in_this_market = Stake.objects.filter(marketinstant = self.market).all()
                 for _stake in all_stakes_in_this_market: 
-                    user_id = _stake.user_stake_id
+                    user_id = _stake.user_id
 
 
-                    for  user_stake in Stake.objects.filter(id = _stake.id ): # 
+                    for  user in Stake.objects.filter(id = _stake.id ): # 
                         ctotal_balanc = float(Account.objects.get(user_id = user_id).balance)
-                        amount = float(user_stake.amount)
+                        amount = float(user.amount)
 
-                        if user_stake.marketselection_id == self.resu:
+                        if user.marketselection_id == self.resu:
                             new_bal = ctotal_balanc + amount*2 
                             amount = round(amount*2)
-                            trans_type = 'WIN' 
-                            self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)
 
-                        elif user_stake.marketselection_id != self.resu:
+
+                            per_for_referer =5  # Settings 
+                            ref_credit = (per_for_referer/100)*amount
+                            rem_credit = amount -ref_credit
+
+
+
+                            trans_type = 'WIN' 
+                            self.update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type)
+
+                            trans_type = 'R-WIN'
+                            self.update_reference_account(user_id,ref_credit,trans_type)
+
+                        elif user.marketselection_id != self.resu:
                             all_gain = float(self.market.offset)
-                            userstake =  float(user_stake.amount)
+                            userstake =  float(user.amount)
                             if self.resu == 2:
                                 all_lose_stake = float(self.market.black_bet_amount)
                             elif self.resu ==1:
@@ -529,7 +671,7 @@ class Result(TimeStamp):
                             relief_amount = self.per_returnn(all_gain,userstake,all_lose_stake,per_to_return)
                             new_bal = ctotal_balanc + relief_amount
                             amount= round(relief_amount,1)
-                            trans_type = 'Relief On LOSE'
+                            trans_type = 'ROL'
                             self.update_acc_n_bal_record(user_id,new_bal,amount,trans_type)  
                                                                                           
                     self.closed= True
@@ -544,7 +686,8 @@ class Result(TimeStamp):
             set_per_return = BetSettingVar.objects.get(id = 1).per_retun
             self.return_per =set_per_return
             self.gain = self.market.gain_after_relief
-            MarketInstance.objects.filter(id =self.market_id).update(closed =True) 
+            MarketInstance.objects.filter(id =self.market_id).update(closed =True) # self.market.update(closed=True) or self.market.closed=True DOESN'T WORK
+            
         except Exception as e:
             print('RESULT RECORDS:',e)
             pass
@@ -555,7 +698,7 @@ class Result(TimeStamp):
 
         self.resu = self.determine_result_algo
 
-        if  self.resu and  not self.closed:
+        if  self.resu and not self.closed:
 
             self.update_db_records()
             self.account_update()
@@ -570,5 +713,6 @@ class Result(TimeStamp):
  
 class BetSettingVar(TimeStamp):
     per_retun = models.FloatField(default = 0,blank =True,null= True)
+    min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
     closed_at = models.FloatField(default =8,blank =True,null= True)
     results_at = models.FloatField(default =8.1,blank =True,null= True)

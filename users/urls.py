@@ -8,7 +8,7 @@ from django.urls import path, include
 router = DefaultRouter()
 
 # router.register(r'user', views.UserViewSet)
-router.register(r'users', views.CustomUserViewSet)
+router.register(r'custom_users', views.CustomUserViewSet)
 router.register(r'account', views.AccountViewSet)
 router.register(r'market', views.MarketInstanceViewSet)
 router.register(r'stake', views.StakeViewSet)
@@ -27,7 +27,9 @@ app_name = 'users'
 urlpatterns = [
     path('', include(router.urls)),
     path('user/', UserRecordView.as_view(), name='users'),
-    path('user_trans/<int:pk>', views.TransactionView.as_view()),
+    path('user_trans/_start=<int:start>&_limit=<int:limit>/_user_id=<int:pk>', views.TransactionView.as_view()),
     #path('rest-auth/', include('rest_auth.urls')),
 ]
+
+#posts?_start=$startIndex&_limit=$limit
 

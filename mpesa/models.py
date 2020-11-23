@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 import uuid
-from users.models import Account,UserDetail ,Balance
+from users.models import *
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -85,7 +85,7 @@ class PaymentTransaction(models.Model):
 
     def create_bal_record(self,destin):
         try:
-            Balance.objects.create(user_bal_id =self.user_id,amount= self.amount ,trans_type = f'Deposit to {destin}')
+            TransactionsLog.objects.create(user_bal_id =self.user_id,amount= self.amount ,trans_type = f'Deposit to {destin}')
         except  Exception as e:
             print(e)
             pass

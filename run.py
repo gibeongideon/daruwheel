@@ -1,5 +1,5 @@
 
-from users.models import MarketInstance ,Result,BetSettingVar
+# from users.models import MarketInstance ,Result,BetSettingVar
 from time import sleep
 import random
 
@@ -17,10 +17,20 @@ def countD(n,str1="Market Active till {} count down is ZERO."):
             break  
 
 
+
+
 def control():
-    id = max([MarketInstance.objects.get(id =obj.id).id for obj in MarketInstance.objects.all()]) + 1
+    # from users.models import MarketInstance ,Result,BetSettingVar
+    # id = max([MarketInstance.objects.get(id =obj.id).id for obj in MarketInstance.objects.all()]) + 1
     try:
         while True:
+                from users.models import MarketInstance ,Result,BetSettingVar # import changes in real time
+                id = max([MarketInstance.objects.get(id =obj.id).id for obj in MarketInstance.objects.all()]) + 1
+                try:
+                    Result.objects.create(market_id = id-1,cumgain_id =1 )
+                except:
+                    pass
+
                 countD(60,str1='Next Market to be created in {} seconds')
                 sleep_time = BetSettingVar.objects.get(id =1).results_at
                 MarketInstance.objects.create(id = id)
