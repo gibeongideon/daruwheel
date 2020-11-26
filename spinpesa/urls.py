@@ -21,12 +21,12 @@ from mpesa.urls import mpesa_urls  #  No module named 'requests
 
 admin.site.site_header = 'StackCash  Admin'
 # admin.site.index_title = 'SpinPesa Modules'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('users.urls',namespace='users')),
+    path('users/', include('users.urls',namespace='users')),
+    path('account/', include('account.urls',namespace='accounts')),
+    path('mpesa/', include(mpesa_urls)),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
-    path('mpesa/', include(mpesa_urls))
-
+    
 ]
-
-

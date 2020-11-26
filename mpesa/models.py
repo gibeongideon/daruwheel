@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 import uuid
-from users.models import *
+from account.models import *
 from django.contrib.auth.models import User
 
 # Create your models here.

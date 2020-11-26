@@ -3,6 +3,8 @@ from django.urls import path
 from django.conf.urls import url, include
 from .views import SubmitView, CheckTransaction, ConfirmView, CheckTransactionOnline
 
+app_name = 'mpesa'
+
 mpesa_urls = [
     url(r'^submit/', SubmitView.as_view(), name='submit'),
     url(r'^confirm/', ConfirmView.as_view(), name='confirm'),

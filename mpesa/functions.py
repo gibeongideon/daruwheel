@@ -18,14 +18,14 @@ try:
 except ModuleNotFoundError:
     pass
 
-consumer_key = os.environ.get('CONSUMER_KEY')
-consumer_secret = os.environ.get('CONSUMER_SECRET')
+consumer_key = os.environ.get('CONSUMER_KEY')#
+consumer_secret = os.environ.get('CONSUMER_SECRET')#
 api_URL = os.environ.get('API_URL')
 INITIATOR_PASS = os.environ.get('INITIATOR_PASS')
 CERTIFICATE_FILE = os.environ.get('CERTIFICATE_FILE')
 HOST_NAME = os.environ.get('HOST_NAME')
 PASS_KEY = os.environ.get('PASS_KEY')
-shortcode = os.environ.get('SHORT_CODE')
+shortcode = os.environ.get('SHORT_CODE')#
 
 
 def encryptInitiatorPassword():
@@ -46,6 +46,7 @@ def generate_pass_key(cipher):
     time_now = datetime.datetime.now().strftime("%Y%m%d%H%I%S")
     s = shortcode + PASS_KEY + time_now
     encoded = b64encode(s.encode('utf-8')).decode('utf-8')
+    return encoded
 
 
 def get_token():
@@ -54,7 +55,7 @@ def get_token():
     r = requests.get(api_URL, auth=HTTPBasicAuth(consumer_key, consumer_secret))
     jonresponse = json.loads(r.content)
     access_token = jonresponse['access_token']
-    print(access_token)
+    print(access_token)#remov
     return access_token
 
 

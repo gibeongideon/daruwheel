@@ -37,11 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cash_api',
     'users',
     'rest_framework',
     'rest_framework.authtoken',
     'mpesa',
+    'core',
+    'transactions',
+    'account',
+    'market',
+    
     
     
 ]
@@ -147,8 +151,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-
-
-
-

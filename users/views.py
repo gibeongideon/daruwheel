@@ -24,13 +24,12 @@ class UserRecordView(APIView):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-    # def get(self,user_name, format=None):
-    #     id = User.objects.get(username= user_name).id
-    #     # serializer = UserSerializer(users, many=True)
-    #     return {'id':id}
 
 
     def post(self, request):
+        # print(request.data)#first_name to be own_refer_code
+        request.data['first_name']= 'SC'+ request.data['username'] #USE  first_name as  own_refer_code
+
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=ValueError):
             serializer.create(validated_data=request.data)
@@ -49,45 +48,24 @@ class UserRecordView(APIView):
 
 
 
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = UserDetail.objects.all()
-    serializer_class = UserProfileSerializer
+# class CustomUserViewSet(viewsets.ModelViewSet):
+#     queryset = UserDetail.objects.all()
+#     serializer_class = UserProfileSerializer
 
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-class AccountViewSet(viewsets.ModelViewSet):
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
-    
-
-class MarketInstanceViewSet(viewsets.ModelViewSet):
-    queryset = MarketInstance.objects.all()
-    serializer_class = MarketInstanceSerializer
-
-
-class StakeViewSet(viewsets.ModelViewSet):
-    queryset = Stake.objects.all()
-    serializer_class = StakeSerializer
-
-
-class TransactionLogViewSet(viewsets.ModelViewSet):
-    queryset = TransactionLog.objects.all()
-    serializer_class = TransactionLogSerializer
-
-    search_fields = ('user', )
-
-class TransactionView(APIView):
+class UserIDView(APIView):
     """
-    API View to get a list of all the TransactionLogs for TransactionLogs
+    API View to get a a user details like id by passing username
+    # implement url /user_detail=<user_name>
     """
-    # permission_classes = [IsAdminUser]
+    def get(self,request,user_name,format=None):
+        try:
+            user_id =User.objects.get(username= str(user_name)).id
+            user_info ={'user_id':user_id,'username':user_name,}
+            return Response(user_info)
 
-    def get(self,request,pk,start,limit, format=None):
-        end =start+limit
-        trans = TransactionLog.objects.filter(user_bal= pk).order_by('-created_at')[start:end]# cool huh
-        # print(f'TRANS VIEW{trans}')
-        serializer = TransactionLogSerializer(trans,many=True)
-        return Response(serializer.data) 
+        except :# Exception as e:
+            # return Response({'error':e.args})
+            raise Http404
+
+
 
