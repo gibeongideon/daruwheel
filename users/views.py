@@ -24,6 +24,11 @@ class UserRecordView(APIView):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
+    # def get(self,user_name, format=None):
+    #     id = User.objects.get(username= user_name).id
+    #     # serializer = UserSerializer(users, many=True)
+    #     return {'id':id}
+
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -67,20 +72,22 @@ class StakeViewSet(viewsets.ModelViewSet):
     serializer_class = StakeSerializer
 
 
-class BalanceViewSet(viewsets.ModelViewSet):
-    queryset = Balance.objects.all()
-    serializer_class = BalanceSerializer
+class TransactionLogViewSet(viewsets.ModelViewSet):
+    queryset = TransactionLog.objects.all()
+    serializer_class = TransactionLogSerializer
 
-    search_fields = ('user_bal', )
+    search_fields = ('user', )
 
 class TransactionView(APIView):
     """
-    API View to get a list of all the Balances for Balances
+    API View to get a list of all the TransactionLogs for TransactionLogs
     """
     # permission_classes = [IsAdminUser]
 
-    def get(self,request,pk, format=None):
-        trans = Balance.objects.filter(user_bal= pk)
-        serializer = BalanceSerializer(trans,many=True)
+    def get(self,request,pk,start,limit, format=None):
+        end =start+limit
+        trans = TransactionLog.objects.filter(user_bal= pk).order_by('-created_at')[start:end]# cool huh
+        # print(f'TRANS VIEW{trans}')
+        serializer = TransactionLogSerializer(trans,many=True)
         return Response(serializer.data) 
 

@@ -94,7 +94,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ('user','balance',)
+        fields = ('user','TransactionLog',)
         read_only_fields = ('active', 'is_staff')
 
 
@@ -117,14 +117,14 @@ class StakeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stake
         # fields = ('__all__')
-        fields = ('user_stake','marketinstant','marketselection','mrkt_selection','amount',)
+        fields = ('user','marketinstant','marketselection','mrkt_selection','amount',)
 
 
-class BalanceSerializer(serializers.ModelSerializer):
+class TransactionLogSerializer(serializers.ModelSerializer):
     """
-    A Balance serializer to return Balance details
+    A TransactionLog serializer to return TransactionLog details
     """
     class Meta:
-        model = Balance
+        model = TransactionLog
         #fields = ('__all__')
-        fields = ('id','amount','trans_type')
+        fields = ('id','amount','now_bal','trans_type')
