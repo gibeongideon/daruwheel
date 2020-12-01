@@ -20,12 +20,12 @@ def countD(n,str1="Market Active till {} count down is ZERO."):
 
 
 def control():
-    # from users.models import MarketInstance ,Result,BetSettingVar
-    # id = max([MarketInstance.objects.get(id =obj.id).id for obj in MarketInstance.objects.all()]) + 1
+    from users.models import MarketInstance ,Result,BetSettingVar
+    id = max([obj.id for obj in MarketInstance.objects.all()]) + 1
     try:
         while True:
                 from users.models import MarketInstance ,Result,BetSettingVar # import changes in real time
-                id = max([MarketInstance.objects.get(id =obj.id).id for obj in MarketInstance.objects.all()]) + 1
+                id = 
                 try:
                     Result.objects.create(market_id = id-1,cumgain_id =1 )
                 except:

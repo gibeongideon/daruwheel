@@ -36,7 +36,7 @@ class SubmitView(APIView):
         # b2c()
         message = {"status": "ok", "transaction_id": transactionId}
         return Response(message, status=HTTP_200_OK)
-
+        
 
 class CheckTransactionOnline(APIView):
     permission_classes = [AllowAny, ]
@@ -145,6 +145,7 @@ class ConfirmView(APIView):
                     receipt_number = data.get('Value')
             transaction = PaymentTransaction.objects.get(
                 checkoutRequestID=requestId)
+                
             if transaction:
                 transaction.trans_id = receipt_number
                 transaction.isFinished = True

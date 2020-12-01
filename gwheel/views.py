@@ -1,6 +1,6 @@
-from market.serializers import *
+from gwheel.serializers import MarketInstanceSerializer,StakeSerializer
 from rest_framework import viewsets
-from .models import *
+from gwheel.models import  WheelSpin ,Stake
 
 
 # from .serializers import UserSerializer
@@ -14,7 +14,7 @@ from .models import *
 
 
 class MarketInstanceViewSet(viewsets.ModelViewSet):
-    queryset = MarketInstance.objects.all()
+    queryset = WheelSpin.objects.all()
     serializer_class = MarketInstanceSerializer
 
 

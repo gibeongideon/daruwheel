@@ -1,19 +1,31 @@
 from django.db import models
 from django.contrib.auth.models import User
-# from datetime import datetime, timedelta #,timezone
-# from django.utils import timezone
-
 from core.models import TimeStamp,BetSettingVar
 
+
+# def sc_logger(**kwargz):
+#     ''' bool :has_record
+#         int : user_id   
+#         int : amount 
+#         str : trans_type '''
+    
+#     if not kwargz['has_record']:
+#         TransactionLog.objects.create(user_id = kwargz['user_id'],amount= kwargz['amount'] ,trans_type = kwargz['trans_type'])
+#         return True
+#     else:
+#         return
+
+    
 class Account(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    actual_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     trial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=50000)
     active = models.BooleanField(default= True)
 
     def __str__(self): 
-        return f'Account No: {self.user} Balance: {self.balance}'
+        return 'Account No: {0} Balance: {1}'.format(self.user,self.balance)
     class Meta:
         ordering = ('-user_id',)
 
@@ -90,7 +102,7 @@ class RefCredit(TimeStamp):
                 self.log_record()
 
         except Exception as e:
-            print(f'RefCredit:{e}')
+            print('RefCredit:',e)
             return 
 
         super().save(*args, **kwargs)
@@ -103,7 +115,7 @@ class TransactionLog(TimeStamp):
     trans_type = models.CharField(max_length=200 ,blank =True,null=True)
     
     def __str__(self):
-        return f'User {self.user}:{self.amount}'
+        return 'User {0}:{1}'.format(self.user,self.amount)
 
     class Meta:
         ordering = ('-created_at',)
@@ -171,7 +183,7 @@ class CashDeposit(TimeStamp):
 
             try:
                 if not self.has_record:
-                    TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Deposit')
+                    TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Shop deposit')
                     self.has_record = True
             except  Exception as e:
                 pass
@@ -186,60 +198,82 @@ class CashDeposit(TimeStamp):
 class CashWithrawal(TimeStamp): # sensitive transaction
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0) 
+    approved = models.BooleanField(default=False,blank= True,null =True)
     withrawned = models.BooleanField(blank= True,null =True)
     has_record = models.BooleanField(blank= True,null =True)
+    active = models.BooleanField(default =True,blank= True,null =True)
     # charges_fee = models.FloatField(default =0 ,blank = True,null= true)
 
     def __str__(self):
         return str(self.amount)
 
     @property
-    def current_bal(self):
+    def user_account(self):
         try:
-            ac_bal = Account.objects.get(user_id =self.user_id).balance
-            return ac_bal
-        except Exception as e:
-            return e  
+            return Account.objects.get(user_id =self.user_id)
+        except :
+            return 'querying..' 
 
     @property # TODO no hrd coding
     def charges_fee(self):
         if self.amount <=100:
-            return 10
+            return 0
         elif self.amount <=200:
-            return 15
+            return 0
         else:
-            return 30
+            return 0
+
+    def withraw_status(self):
+        if not self.approved:
+            return 'pending'
+        elif self.approved and self.withrawned:
+            return 'success'
+        else:
+            return 'failed'
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
-        account_is_active = Account.objects.get(user_id = self.user_id).active
-        # withraw if 
-        if account_is_active:# withraw cash ! or else no cash!
-            # if self.pk:
-            try:
-                if not self.withrawned:# withraw cash ! no repeated withraws!
-                    ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
-                    charges_fee = self.charges_fee
+        account_is_active = self.user_account.active
+        ctotal_balanc = self.user_account.balance
 
-                    if ctotal_balanc > ( self.amount + charges_fee):
-                        new_bal = ctotal_balanc - self.amount - charges_fee
-                        # self.current_bal = new_bal
-                        Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
-                        self.withrawned = True # transaction done
+        if self.active: # edit prevent # avoid data ma
+            if account_is_active:# withraw cash ! or else no cash!
+            
+                try:
+                    if not self.withrawned and self.approved:# stop repeated withraws and withraw only id approved by ADMIN 
+                    
+                        charges_fee = self.charges_fee
 
-                    else:
-                        return 'insufficient funds in your account'
-                        
-                    try:
-                        if not  self.has_record:
-                            TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Withrawal')
-                            self.has_record = True
-                    except:
-                        pass
+                        if ctotal_balanc >= ( self.amount + charges_fee):
+                            try:                                
+                                new_bal = ctotal_balanc - self.amount - charges_fee
+                                # self.current_bal = new_bal
+                                Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
+                                self.withrawned = True # transaction done
 
-            except Exception as e:
-                print(f'CashWithRawal:{e}')
-                return  # incase of error /No withrawing should happen
-                # pass
+                                # else:
+                                #     self.withrawned= False
+                                #     raise Exception #('insufficient funds in your account')
 
-            super().save(*args, **kwargs)
+                                try:
+                                    if not self.has_record:
+                                        TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Withrawal')
+                                        self.has_record = True
+                                        self.active = False
+                                except Exception as e:
+                                    print('TRANSWITH:',e)
+                                    pass
+
+                            except Exception as e:
+                                print('ACCC',e)
+                        # else:
+                        #     return#
+                                
+                except Exception as e:  
+                    print('CashWithRawal:',e)
+                    return  # incase of error /No withrawing should happen
+                    # pass
+                if self.approved: #and self.withrawned and self.has_record:
+                    self.active =False
+
+                super().save(*args, **kwargs)

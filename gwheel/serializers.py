@@ -1,5 +1,5 @@
 
-from .models import *
+from gwheel.models import WheelSpin,Stake
 from rest_framework import serializers
 
 
@@ -9,7 +9,7 @@ class MarketInstanceSerializer(serializers.ModelSerializer):
     """
     # profile = UserProfileSerializer(required=True)
     class Meta:
-        model = MarketInstance
+        model = WheelSpin
         fields = ('__all__')
         # fields = ('id', 'marketinstance', 'amount_stake_per_market', 'created_at', 'bet_expiry_time', 'closed_at',)#'profile')
 
@@ -21,5 +21,5 @@ class StakeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stake
         # fields = ('__all__')
-        fields = ('user','marketinstant','marketselection','mrkt_selection','amount',)
+        fields = ('user','marketselection','amount',)
 

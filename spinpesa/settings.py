@@ -42,9 +42,10 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'mpesa',
     'core',
-    'transactions',
     'account',
-    'market',
+    'gwheel'
+    # 'django_celery_results'
+    # 'django_celery_beat'#no
     
     
     
@@ -151,3 +152,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# CELERY SESSINGS
+CELERY_RESULT_BACKEND='django_db'
+
+# CELERY STUFF
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'

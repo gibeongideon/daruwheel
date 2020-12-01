@@ -10,6 +10,7 @@ router = DefaultRouter()
 router.register(r'market', views.MarketInstanceViewSet)
 router.register(r'stake', views.StakeViewSet)
 
+app_name = 'gwheel'
 
 urlpatterns = [
     path('', include(router.urls)),

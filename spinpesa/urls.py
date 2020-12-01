@@ -26,6 +26,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls',namespace='users')),
     path('account/', include('account.urls',namespace='accounts')),
+    path('gwheel/', include('gwheel.urls',namespace='gwheels')),
+    # path('account/', include('account.urls',namespace='accounts')),
     path('mpesa/', include(mpesa_urls)),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
     
