@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'mpesa',
     'core',
     'account',
-    'gwheel'
-    # 'django_celery_results'
+    'gwheel',
+    # 'django_celery_results',
     # 'django_celery_beat'#no
     
     
@@ -153,13 +153,26 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# CELERY SESSINGS
-CELERY_RESULT_BACKEND='django_db'
+# CELERY SETTINGS
 
-# CELERY STUFF
-BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND='django_db'
+# BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
+# CELERY_TIMEZONE = 'Africa/Nairobi'
+# CELERY_RESULT_BACKEND = 'django-db'
+
+
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+
+    'create_spin_wheel_market': { 
+         'task': 'gwheel.tasks.create_spinwheel', 
+         'schedule': crontab(minute= [0,5,10,15,20,25,30,35,40,45,50,55]),
+        },          
+}

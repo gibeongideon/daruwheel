@@ -19,8 +19,8 @@ from django.urls import path, include
 from rest_framework.authtoken import views
 from mpesa.urls import mpesa_urls  #  No module named 'requests
 
-admin.site.site_header = 'StackCash  Admin'
-# admin.site.index_title = 'SpinPesa Modules'
+admin.site.site_header = 'Daricash Admin'
+# admin.site.index_title = ''
 
 urlpatterns = [
     path('admin/', admin.site.urls),

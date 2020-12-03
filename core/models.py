@@ -3,7 +3,8 @@
 
 from django.db import models
 from django.utils import timezone
-
+from datetime import timedelta ,datetime
+# from core.functions.models_settings import set_up
 
 
 class TimeStamp(models.Model):
@@ -15,14 +16,25 @@ class TimeStamp(models.Model):
         abstract = True
 
 
+class BetSettingVar(TimeStamp):
+    per_retun = models.FloatField(default = 0,blank =True,null= True)
+    min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
+    closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
+    results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
+    wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
+
+
+set_upp = (BetSettingVar.objects.get(id =1))
+
 class Market(models.Model):
     '''Market place '''
     open_at = models.DateTimeField(default= timezone.now,blank =True,null=True) 
-    closed_at = models.DateTimeField(blank =True,null=True)                   
+    closed_at = models.DateTimeField(blank =True,null=True)                
     results_at =  models.DateTimeField(blank =True,null=True)
 
     updated_at = models.DateTimeField(auto_now=True,blank =True,null=True)
     active = models.BooleanField(default=True,blank =True,null= True)
+    receive_results = models.BooleanField(default=False,blank =True,null= True)
 
     class Meta:
         abstract = True
@@ -44,6 +56,7 @@ class Market(models.Model):
             return False
         except Exception as e:
             return e
+
 
 
 class MarketType(TimeStamp):
@@ -72,16 +85,3 @@ class Selection(TimeStamp):
 
     def market_id(self):
         return self.mrtype
-
-
-
-
-class BetSettingVar(TimeStamp):
-    per_retun = models.FloatField(default = 0,blank =True,null= True)
-    min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
-    closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
-    results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
-    wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
-
-
-

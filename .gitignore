@@ -8,6 +8,7 @@ docker-compose.yml
 erp_api.sock
 erp_apienv/
 
+
 .DS_Store
 virtual/
 
@@ -220,7 +221,9 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# Environment
+
+scenv
 .env
 .venv
 env/

@@ -3,11 +3,11 @@ from gwheel.models import Stake,WheelSpin,CumulativeGain,Result,Selection,Market
 
 class WheelSpinAdmin(admin.ModelAdmin):
 
-    list_display = ('id','market','active','place_stake_is_active','open_at','closed_at','results_at','updated_at','total_bet_amount_per_marktinstance','selection_bet_amount','black_bet_amount','white_bet_amount','offset','gain_after_relief','place_stake_is_active','get_result_active',)
+    list_display = ('id','market','active','receive_results','place_stake_is_active','open_at','closed_at','results_at','updated_at','total_bet_amount_per_marktinstance','selection_bet_amount','black_bet_amount','white_bet_amount','offset','gain_after_relief','get_result_active',)
     list_display_links = ('id',)
     #list_editable = ('place_stake_is_active',)
     # list_editable = ('closed',)
-    readonly_fields = ('id','market','active','place_stake_is_active','open_at','closed_at','results_at','updated_at','total_bet_amount_per_marktinstance','selection_bet_amount','black_bet_amount','white_bet_amount','offset','gain_after_relief','place_stake_is_active','get_result_active',)
+    readonly_fields = ('id','market','receive_results','active','place_stake_is_active','open_at','closed_at','results_at','updated_at','total_bet_amount_per_marktinstance','selection_bet_amount','black_bet_amount','white_bet_amount','offset','gain_after_relief','place_stake_is_active','get_result_active',)
 
 admin.site.register(WheelSpin, WheelSpinAdmin) 
 
@@ -39,3 +39,5 @@ class ResultAdmin(admin.ModelAdmin):
     # list_editable = ('closed',)
 
 admin.site.register(Result, ResultAdmin) 
+
+

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from core.models import TimeStamp,BetSettingVar
 
 
-# def sc_logger(**kwargz):
+# def sc_logger(**kwargz):  # complicated for nothing! but i love it/Violate The Zen of Python, by Tim Peters//try to write simple code
 #     ''' bool :has_record
 #         int : user_id   
 #         int : amount 
@@ -33,6 +33,7 @@ class RefCredit(TimeStamp):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     current_bal =  models.DecimalField(max_digits=12, decimal_places=2,blank =True,null=True)
+    credit_from = models.CharField(max_length=200 ,blank =True,null=True)
     closed = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
     approved = models.BooleanField(default =False,blank =True ,null= True)

@@ -1,0 +1,14 @@
+## Installation ##
+
+Create enviroment
+  $ python3 -m venv <env_name>
+  $ activate env_name 
+  $ pip3 install -r requirements.txt
+
+run redis server
+  $ ./redis-server 
+
+run django server
+  $ ./manage.py runserver
+
+

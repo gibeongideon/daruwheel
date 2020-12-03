@@ -81,7 +81,7 @@ class PaymentTransaction(models.Model):
             
     def save(self, *args, **kwargs):
              
-        ''' Overrride internal model save method to update balance on staking  '''
+        ''' Overrride internal model save method to update in account  mpesa deposit staking  '''
         if not self.closed:
             try:
                 if self.isSuccessFull and not self.account_updated:
@@ -93,7 +93,6 @@ class PaymentTransaction(models.Model):
                     except Exception as e:
                         print('Mpesa-> Acount Err',e)
 
-                    # if not self.has_record:
                     try:
                         self.log_record('Mpesa deposit')
                         self.has_record = True

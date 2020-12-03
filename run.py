@@ -1,5 +1,4 @@
 
-# from users.models import MarketInstance ,Result,BetSettingVar
 from time import sleep
 import random
 
@@ -17,34 +16,33 @@ def countD(n,str1="Market Active till {} count down is ZERO."):
             break  
 
 
-
-
 def control():
-    from users.models import MarketInstance ,Result,BetSettingVar
-    id = max([obj.id for obj in MarketInstance.objects.all()]) + 1
+    from gwheel.models import WheelSpin
+    # from core.models import BetSettingVar
+    id = max([obj.id for obj in WheelSpin.objects.all()]) + 1
     try:
-        while True:
-                from users.models import MarketInstance ,Result,BetSettingVar # import changes in real time
-                id = 
-                try:
-                    Result.objects.create(market_id = id-1,cumgain_id =1 )
-                except:
-                    pass
+        # while True:
+        from gwheel.models import WheelSpin ,Result
+        from core.models import BetSettingVar
+        try:
+            Result.objects.create(market_id = id-1,cumgain_id =1 )
+        except:
+            pass
 
-                countD(60,str1='Next Market to be created in {} seconds')
-                sleep_time = BetSettingVar.objects.get(id =1).results_at
-                MarketInstance.objects.create(id = id)
-                print(f'Market Instance of ID {id} created')
-                print('ACTIVE BETTING')
-                print(f'SLEEP TIME:{sleep_time}')
+        # countD(60,str1='Next Market to be created in {} seconds')
+        sleep_time = BetSettingVar.objects.get(id =1).results_at
+        WheelSpin.objects.create(id = id)
+        print(f'Market Instance of ID {id} created')
+        print('ACTIVE BETTING')
+        print(f'SLEEP TIME:{sleep_time}')
 
-                countD((sleep_time*60))
+        countD((sleep_time*60)) ##
 
-                print('getting  BACKGROUNG results')
-                sleep((5))
-                Result.objects.create(market_id = id,cumgain_id =1 )  #  updates accounts for win lose
+        print('getting  BACKGROUNG results')
+        countD((6)) ##
+        Result.objects.create(market_id = id,cumgain_id =1 )  #  updates accounts for win lose
 
-                id =id +1
+        id =id +1
 
     except Exception as e:
         print('CONTROL ERROR',e)
