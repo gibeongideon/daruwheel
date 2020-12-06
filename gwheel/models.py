@@ -81,7 +81,6 @@ class WheelSpin(Market):
         return mrkt_bet_amount
 
 
-
     @property
     def offset(self):
         try:
@@ -89,6 +88,7 @@ class WheelSpin(Market):
 
         except Exception as e:
             return e
+
     @property
     def gain_after_relief(self):
         per_to_return = set_up.per_retun

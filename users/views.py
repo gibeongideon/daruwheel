@@ -1,9 +1,7 @@
-from users.serializers import *
 from rest_framework import viewsets
-from .models import *
+from users.models import SetPasswordModel
 
-
-from .serializers import UserSerializer
+from users.serializers import UserSerializer,SetPasswordSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -47,10 +45,9 @@ class UserRecordView(APIView):
 
 
 
-
-# class CustomUserViewSet(viewsets.ModelViewSet):
-#     queryset = UserDetail.objects.all()
-#     serializer_class = UserProfileSerializer
+class SetPasswordViewSet(viewsets.ModelViewSet):
+    queryset = SetPasswordModel.objects.all()
+    serializer_class = SetPasswordSerializer
 
 class UserIDView(APIView):
     """
@@ -66,6 +63,3 @@ class UserIDView(APIView):
         except :# Exception as e:
             # return Response({'error':e.args})
             raise Http404
-
-
-

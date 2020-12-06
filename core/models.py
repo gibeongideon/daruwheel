@@ -85,3 +85,15 @@ class Selection(TimeStamp):
 
     def market_id(self):
         return self.mrtype
+
+
+class Subselection(TimeStamp):
+    selection = models.ForeignKey(Selection,on_delete=models.CASCADE,related_name='selections',blank =True,null= True)
+    name = models.CharField(max_length=100, blank =True,null=True)
+    odds = models.FloatField(max_length=10 ,blank =True,null=True )
+
+    def __str__(self):
+        return '{0}SubSelect:{1}'.format(self.selection.name,self.name)
+
+    def market_id(self):
+        return self.selection
