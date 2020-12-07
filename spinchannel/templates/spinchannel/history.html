@@ -1,0 +1,18 @@
+{% extends 'spinchannel/_base.html' %}
+
+{% block content %}
+  <a href="{% url 'spinchannel:daru_spin' %}">Log out</a>
+  <br>
+  <ul>
+    {% for stake in stakes %}
+      <!-- NOTE: We escape HTML to prevent XSS attacks. -->
+      <li>
+        {{ stake.amount}}: {{ stake.trans_type }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
+
+{% block script %}
+  
+{% endblock script %}

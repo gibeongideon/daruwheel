@@ -1,0 +1,1 @@
+default_app_config = 'spinchannel.apps.SpinchannelConfig'

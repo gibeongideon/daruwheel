@@ -18,5 +18,3 @@ urlpatterns = [
     # path('user_trans/_start=<int:start>&_limit=<int:limit>/_user_id=<int:pk>', views.TransactionView.as_view()),
     #path('rest-auth/', include('rest_auth.urls')),
 ]
-
-

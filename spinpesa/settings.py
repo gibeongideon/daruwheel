@@ -40,15 +40,16 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework.authtoken',
+    'channels',# resolve  apps which need run server commands# move to top
     'mpesa',
     'core',
     'account',
     'gwheel',
     # 'django_celery_results',
     # 'django_celery_beat'#no
-    
-    
-    
+    'spinchannel',
+    'chat',
+      
 ]
 
 MIDDLEWARE = [
@@ -90,6 +91,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'spinpesa.wsgi.application'
+ASGI_APPLICATION = 'spinpesa.asgi.application' 
 
 
 # Database
@@ -156,8 +158,6 @@ AUTH_USER_MODEL = 'auth.User'
 
 STATIC_URL = '/static/'
 
-# CELERY SETTINGS
-
 # CELERY_RESULT_BACKEND='django_db'
 # BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CELERY_BROKER_URL = 'redis://localhost:6379'
@@ -178,4 +178,18 @@ CELERY_BEAT_SCHEDULE = {
          'task': 'gwheel.tasks.create_spinwheel', 
          'schedule': crontab(minute= [0,5,10,15,20,25,30,35,40,45,50,55]),
         },          
+}
+
+
+
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
+        # 'ROUTING': 'spinpesa.routing.channel_routing',
+    }
 }

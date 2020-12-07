@@ -244,6 +244,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+#ignore mp3
+.mp3
+.mp4
 
 # Ignore Migrations (Disabled on production only)
 

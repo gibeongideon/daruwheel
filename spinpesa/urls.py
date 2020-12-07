@@ -19,6 +19,9 @@ from django.urls import path, include
 from rest_framework.authtoken import views
 from mpesa.urls import mpesa_urls  #  No module named 'requests
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 admin.site.site_header = 'Daricash Admin'
 # admin.site.index_title = ''
 
@@ -27,8 +30,9 @@ urlpatterns = [
     path('users/', include('users.urls',namespace='users')),
     path('account/', include('account.urls',namespace='accounts')),
     path('gwheel/', include('gwheel.urls',namespace='gwheels')),
-    # path('account/', include('account.urls',namespace='accounts')),
+    path('spin/', include('spinchannel.urls',namespace='spinchannel')),
+    path('chat/', include('chat.urls',namespace='chat')),
     path('mpesa/', include(mpesa_urls)),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
     
-]
+] + static(settings.STATIC_URL)
