@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from core.models import TimeStamp,BetSettingVar
-from spinpesa.settings import AUTH_USER_MODEL
 
 
 # def sc_logger(**kwargz):  # complicated for nothing! but i love it/Violate The Zen of Python, by Tim Peters//try to write simple code
@@ -18,7 +17,7 @@ from spinpesa.settings import AUTH_USER_MODEL
 
     
 class Account(TimeStamp):
-    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     actual_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -31,7 +30,7 @@ class Account(TimeStamp):
         ordering = ('-user_id',)
 
 class RefCredit(TimeStamp):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     current_bal =  models.DecimalField(max_digits=12, decimal_places=2,blank =True,null=True)
     credit_from = models.CharField(max_length=200 ,blank =True,null=True)
@@ -111,7 +110,7 @@ class RefCredit(TimeStamp):
 
 
 class TransactionLog(TimeStamp):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     now_bal = models.DecimalField(('now_bal'), max_digits=12, decimal_places=2, default=0)
     trans_type = models.CharField(max_length=200 ,blank =True,null=True)
@@ -144,7 +143,7 @@ class TransactionLog(TimeStamp):
 
 
 class CashDeposit(TimeStamp):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     source_no = models.IntegerField(blank =True ,null= True)
     deposited = models.BooleanField(blank =True ,null= True)
@@ -198,7 +197,7 @@ class CashDeposit(TimeStamp):
 
 
 class CashWithrawal(TimeStamp): # sensitive transaction
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0) 
     approved = models.BooleanField(default=False,blank= True,null =True)
     withrawned = models.BooleanField(blank= True,null =True)

@@ -1,7 +1,7 @@
 # reset User Passord
 from django.db import models
 from django.contrib.auth.models import User
-from spinpesa.settings import AUTH_USER_MODEL
+from django.conf import settings
 
 
 import unicodedata

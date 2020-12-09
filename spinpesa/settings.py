@@ -150,8 +150,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-AUTH_USER_MODEL = 'auth.User'
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -182,14 +180,11 @@ CELERY_BEAT_SCHEDULE = {
 
 
 
-
-
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [('localhost', 6379)],
         },
-        # 'ROUTING': 'spinpesa.routing.channel_routing',
     }
 }
