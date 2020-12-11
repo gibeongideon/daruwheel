@@ -3,10 +3,10 @@ from time import sleep
 from celery import shared_task
 
 
-def countD(n,str1="Market Active till {} count down is ZERO."):
+def countD(n, str1="Market Active till {} count down is ZERO."):
     countDown = n
     while (countDown >= 0):
-        cc=[]
+        cc = []
         if countDown != 0:
             cc.append(countDown)
             print(str1.format(cc[0]),end='\r')

@@ -10,19 +10,19 @@
     <input id="chat-message-submit" type="button" value="Send">
     {{ room_name|json_script:"room-name" }}
     <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
-            + '/ws/chat/'
-            + roomName
+            + '/ws/spin/'
+            // + roomName
             + '/'
         );
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            
+          
             document.querySelector('#chat-log').value += (data.message + '\n');
         };
 
@@ -47,4 +47,4 @@
         };
     </script>
 </body>
-</html>
+</html>    
