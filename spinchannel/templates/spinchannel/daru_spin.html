@@ -15,10 +15,27 @@
 
             <!-- <p>Here is an example of a code-drawn Wheel of Fortune looking wheel which spins to a stop with the prize won alerted to the user.</p>
             <br />
+            
     
             <br /> 
             <p>Choose a power setting then press the Spin button. You will be alerted to the prize won when the spinning stops.</p> -->
-
+            <script> 
+                // var count;
+                // document.write("Starting Loop",+"<br/>");
+                // for (count=0;count<10;count++) {
+                //     document.write("Current Count:"+count);
+                // }
+                // document.write("Loop Stopped")
+                tim =new Date
+                
+                document.write(tim.getMinutes())
+                document.write(tim.getSeconds())
+    
+                // document.write('12'[1])
+           
+    
+                            
+                </script>
             <table cellpadding="0" cellspacing="0" border="0">
             <tr>
                 <td>
@@ -32,7 +49,7 @@
                             <tr>
                                 <td width="78" align="center" id="pw3" onClick="powerSelected(3);">High</td>
                             </tr>
-                            <tr>
+                            <tr> 
                                 <td align="center" id="pw2" onClick="powerSelected(2);">Med</td>
                             </tr>
                             <tr>
@@ -40,7 +57,7 @@
                             </tr>
                         </table>
                         <br />
-                        <img id="spin_button" src="/static/users/img/spin_img/spin_off.png" alt="Spin" onClick="startSpin();" />
+                        <img id="spin_button" src="+" alt="Spin" onClick="startSpin();" />
                         <br /><br />
                         &nbsp;&nbsp;<a href="#" onClick="resetWheel(); return false;">Play Again</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(reset)
                     </div>

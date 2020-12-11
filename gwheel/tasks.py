@@ -3,10 +3,10 @@ from time import sleep
 from celery import shared_task
 
 
-def countD(n,str1="Market Active till {} count down is ZERO."):
+def countD(n, str1="Market Active till {} count down is ZERO."):
     countDown = n
     while (countDown >= 0):
-        cc=[]
+        cc = []
         if countDown != 0:
             cc.append(countDown)
             print(str1.format(cc[0]),end='\r')
@@ -16,18 +16,16 @@ def countD(n,str1="Market Active till {} count down is ZERO."):
         else:
             break  
 
-
 def control():
     from gwheel.models import WheelSpin
     # from core.models import BetSettingVar
     
     id = max([obj.id for obj in WheelSpin.objects.all()])
     try:
-     
         from gwheel.models import WheelSpin ,Result
         from core.models import BetSettingVar
    
-        print('Processing Results and ')
+        print('Processing Results and robbing gamblers accounts!! ')
         try:
             Result.objects.create(market_id = id,cumgain_id =1 )  #  process result of last ma
         except:
@@ -47,13 +45,10 @@ def control():
         print('CONTROL ERROR',e)
         return e
 
-
 @shared_task 
 def create_spinwheel():
     ''' wheel instance to be executed every 10 minutes'''
-
-    print('Wanna SPIN CREATED')
+    print('Wanna SPIN CREATED') 
     control()
     # countD((4.5*60))
     print('SPIN SPIN!! ')
-     
