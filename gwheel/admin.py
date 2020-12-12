@@ -1,5 +1,5 @@
 from django.contrib import admin
-from gwheel.models import Stake,WheelSpin,CumulativeGain,Result,Selection,MarketType
+from gwheel.models import Stake,WheelSpin,CumulativeGain,Result,Selection,MarketType,OutCome
 
 class WheelSpinAdmin(admin.ModelAdmin):
 
@@ -30,6 +30,15 @@ class CumulativeGainAdmin(admin.ModelAdmin):
     # list_editable = ('',)
 
 admin.site.register(CumulativeGain, CumulativeGainAdmin) 
+
+class OutComeAdmin(admin.ModelAdmin):
+    list_display = ('id','market','closed','result','pointer','determine_result_algo','segment','created_at','updated_at')
+    list_display_links = ('id',)
+    # list_editable = ('',)
+
+admin.site.register(OutCome, OutComeAdmin) 
+
+
 
 
 

@@ -1,4 +1,3 @@
-# from django.contrib.auth import user_logged_in, user_logged_out
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from gwheel.models import Result
@@ -10,8 +9,9 @@ from asgiref.sync import async_to_sync
 @receiver(post_save, sender=Result)
 def on_results_save(sender, **kwargs):
     print('RESULT SAVES,INSIDE SIGNAL')
-    resu = Result.objects.get(id=96).resu  # fix id
-    message = f'I got you man from signal bro.You nailed it!RESU{resu}'
+    latest_resu_id = max([obj.id for obj in Result.objects.all()])
+    resu = Result.objects.get(id=latest_resu_id).resu  # fix id
+    message = resu
 
     channel_layer = get_channel_layer()
     print(f'MESIN{message}')
@@ -23,4 +23,11 @@ def on_results_save(sender, **kwargs):
             "message": message
         }
     )
+    # async_to_sync(channel_layer.group_send)(
+    #     "spin_spin",
+    #     {
+    #         "type": "spin_results",
+    #         "message": message
+    #     }
+    # )
   
