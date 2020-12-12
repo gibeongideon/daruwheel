@@ -228,6 +228,69 @@ class CumulativeGain(TimeStamp):
             print(e)
             return e
 
+
+# def result_to_segment(results = None, segment=29):
+#     from random import randint, randrange
+#     if results is None:
+#         results = randint(1,2)
+#     if results ==1:
+#         print(randrange(1,segment,2))
+#         return randrange(1,segment,2)
+#     else:
+#         print(randrange(2,segment,2))
+#         return randrange(2,segment,2)
+
+class OutCome(TimeStamp):
+    market  = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='marketoutcomes',blank =True,null= True)
+    result = models.IntegerField(blank =True,null= True)
+    pointer = models.IntegerField(blank =True,null= True)
+    closed = models.BooleanField(default = False,blank =True,null= True)
+
+    @property
+    def determine_result_algo(self):  # fix this
+        try:
+            B = self.market.black_bet_amount
+            W = self.market.white_bet_amount
+            
+            if self.market.place_stake_is_active == False:
+                if B == W:
+                    return randint(1,2) # fix me to get random 1 or 2
+                if B > W :
+                    return 2
+                return 1
+
+        except Exception as e:
+            return  e
+
+    @staticmethod
+    def result_to_segment(results = None, segment=29):
+        from random import randint, randrange
+        if results is None:
+            results = randint(1,2)
+        if results ==1:
+            return randrange(1,segment,2)
+        else:
+            return randrange(2,segment,2)
+
+    def segment(self):
+        return self.result_to_segment(results = self.result)# ,segment = 29) fro settings
+
+    def save(self, *args, **kwargs):
+        if not self.closed:
+            if self.market.place_stake_is_active == False:
+                self.result = self.determine_result_algo
+                self.closed =True
+
+                super().save(*args, **kwargs)
+        else:
+            return
+
+
+
+
+
+
+
 class Result(TimeStamp):
 
     market = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='rmarkets',blank =True,null= True)
