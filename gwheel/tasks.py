@@ -28,7 +28,8 @@ def control():
         print('Processing Results and robbing gamblers accounts!! ')
         try:
             Result.objects.create(market_id = id,cumgain_id =1 )  #  process result of last ma
-        except:
+        except Exception as e:
+            print('RESUURR',e)
             pass
 
         print('Creating Wheel Spin Instance')

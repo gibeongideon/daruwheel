@@ -11,7 +11,7 @@ def on_results_save(sender, **kwargs):
     print('RESULT SAVES,INSIDE SIGNAL')
     latest_resu_id = max([obj.id for obj in Result.objects.all()])
     resu = Result.objects.get(id=latest_resu_id).resu  # fix id
-    message = f'RESU{resu}'
+    message = resu
 
     channel_layer = get_channel_layer()
     print(f'MESIN{message}')

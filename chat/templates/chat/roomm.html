@@ -19,7 +19,7 @@
                 <!-- <br /> -->
 
                 <!-- <br /> -->
-                <!-- <img id="spin_button" src="/static/users/img/spin_img/spin_on.png" alt="Spin" onClick="startSpin();" /> -->
+                <img id="spin_button" src="/static/users/img/spin_img/spin_on.png" alt="Spin" onClick="startSpin();" />
                 <!-- <br /><br /> -->
                 <!-- &nbsp;&nbsp; -->
                 <!-- <a href="#" onClick="resetWheel(); return false;">Play Again</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(reset) -->
@@ -32,9 +32,9 @@
         </td>
     </tr>
 </table>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br> 
+    <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>  -->
     <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
+    <input id="chat-message-submit" type="button" value="serverSpin">
     {{ room_name|json_script:"room-name" }}
 
 <script>
@@ -49,14 +49,16 @@ const chatSocket = new WebSocket(
 );
 
 chatSocket.onmessage = function(e) {
-    startSpin();
+    
     const data = JSON.parse(e.data);
+
+    startSpinB(data.seg);
     
     document.querySelector('#chat-log').value += (data.message + '\n');
 };
 
 chatSocket.onclose = function(e) {
-    console.error('Chat socket closed unexpectedly');
+    console.error('spin socket closed unexpectedly');
 };
 
 document.querySelector('#chat-message-input').focus();
@@ -74,11 +76,11 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
     }));
     messageInputDom.value = '';
 };
-// Create new wheel object specifying the parameters at creation time.
+
 let theWheel = new Winwheel({
                 'outerRadius'     : 212,        // Set outer radius so wheel fits inside the background.
                 'innerRadius'     : 75,   
-                //'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
+                'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
                 'textFontSize'    : 24,         // Set default font size for the segments.
                 'textOrientation' : 'vertical', // Make text vertial so goes down from the outside of wheel.
                 'textAlignment'   : 'outer',    // Align text to outside of wheel.
@@ -172,6 +174,35 @@ let theWheel = new Winwheel({
      
             }
 
+            function startSpinB(seg){
+                theWheel.stopAnimation(false);
+                theWheel.rotationAngle = 0;
+                segmentNumber = 8;
+                let stopAt = theWheel.getRandomForSegment(segmentNumber);
+                theWheel.animation.stopAngle = stopAt;
+
+                theWheel.startAnimation();
+                
+                }
+          
+        //         let segmentNumber = 450;//data.segment;   // The segment number should be in response.
+    
+        //             // if (segmentNumber) {
+        //                 // Get random angle inside specified segment of the wheel.
+        //                 let stopAt = theWheel.getRandomForSegment(segmentNumber);
+
+        //                 // Important thing is to set the stopAngle of the animation before stating the spin.
+        //                 // theWheel.animation.stopAngle = stopAt;
+
+        //                 // Start the spin animation here.
+        //                 theWheel.startAnimation();
+        //             // }
+
+
+     
+
+                
+          
     
 
             // -------------------------------------------------------
