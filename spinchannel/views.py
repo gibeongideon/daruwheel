@@ -24,16 +24,15 @@ def user_list(request):
         user.status = 'Online' if hasattr(user, 'logged_in_user') else 'Offline'
     return render(request, 'spinchannel/user_list.html', {'users': users})
     
-@login_required(login_url='/spin/log_in/')
+@login_required(login_url='/spin/login/')
 def daru_spin(request):
-    try:
-        print('logged in',request.user)
-        user = request.user
-        Account.objects.update_or_create(user=user)
-        # user = User.objects.get_or_create('logged_in_user')
-        return render(request, 'spinchannel/daru_spin.html',{'user': user})
-    except Exception as e:
-        print(e)
+    # try:
+    print('logged in',request.user)
+    user = request.user
+    Account.objects.update_or_create(user=user)
+    # user = User.objects.get_or_create('logged_in_user')
+    return render(request, 'spinchannel/daru_spin.html',{'user': user})
+    
 
 @login_required(login_url='/spin/log_in/')
 def history(request):

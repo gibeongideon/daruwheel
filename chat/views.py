@@ -13,5 +13,5 @@ def room(request, room_name):
         'room_name': room_name
     })
 
-def spin(request, room_name):
-    return render(request, 'chat/spin.html', {})
+def spin(request):
+    return render(request, 'chat/roomm.html', {})

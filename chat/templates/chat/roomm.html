@@ -35,16 +35,16 @@
     <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>  -->
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="serverSpin">
-    {{ room_name|json_script:"room-name" }}
+    <!-- {{ room_name|json_script:"room-name" }} -->
 
 <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        // const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
 const chatSocket = new WebSocket(
     'ws://'
     + window.location.host
     + '/ws/chat/'
-    + roomName
+    // + roomName
     + '/'
 );
 
@@ -80,7 +80,7 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
 let theWheel = new Winwheel({
                 'outerRadius'     : 212,        // Set outer radius so wheel fits inside the background.
                 'innerRadius'     : 75,   
-                'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
+                // 'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
                 'textFontSize'    : 24,         // Set default font size for the segments.
                 'textOrientation' : 'vertical', // Make text vertial so goes down from the outside of wheel.
                 'textAlignment'   : 'outer',    // Align text to outside of wheel.

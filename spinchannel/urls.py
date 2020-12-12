@@ -10,17 +10,6 @@ from django.contrib.auth.views import LogoutView
 
 app_name = 'spinchannel'
 
-# urlpatterns = [
-#    url(r'^log_in/$', log_in, name='log_in'),
-#    url(r'^log_out/$', log_out, name='log_out'),
-#    url(r'^sign_up/$', sign_up, name='sign_up'),
-#    url(r'^history/$', history, name='history'),
-#    url(r'^user_list/$', user_list, name='user_list'),
-#   url(r'^$', daru_spin, name='daru_spin'),
-# ] 
-
-
-
 urlpatterns = [
     path('login/', log_in, name="log_in"),
     path('sign_up/', sign_up, name="sign_up"),

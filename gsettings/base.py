@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'channels',# resolve  apps which need run server commands# move to top
+    'mpesa',
+    # 'mpesa_api.core',
+    # 'mpesa_api.util',
     'core',
     'account',
     'gwheel',
@@ -52,8 +55,9 @@ INSTALLED_APPS = [
     # 'django_celery_beat'#no
     'spinchannel',
     'chat',
-    'mpesa_api',
-    'cash_trans',
+    'mpesa_api'
+    
+    
       
 ]
 
@@ -184,9 +188,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static'))
+# STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static'))
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
+# MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
 MEDIA_UPLOAD_FOLDER = '%Y_%m_%d/'
 
 
@@ -286,4 +290,4 @@ C2B_ONLINE_SHORT_CODE = config('C2B_ONLINE_SHORT_CODE', default='')
 C2B_ONLINE_PARTY_B = config('C2B_ONLINE_PARTY_B', default='')
 # number of seconds from the expiry we consider the token expired the token expires after an hour
 # so if the token is 600 sec (10 minutes) to expiry we consider the token expired.
-# TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600, cast=int) ## invalid literal for int() with base 10: "config('TOKEN_THRESHOLD')"
+TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600, cast=int)
