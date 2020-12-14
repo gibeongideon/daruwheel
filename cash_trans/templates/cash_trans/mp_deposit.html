@@ -1,0 +1,16 @@
+
+{% extends 'cash_trans/_base.html' %}
+
+{% block content %}
+  <form action="{% url 'cash_trans:mpesa_deposit' %}" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div>
+        {{ field.label_tag }}
+        {{ field }}
+      </div>
+    {% endfor %}
+    <button type="submit">Deposit</button>
+  </form>
+  <!-- <p>Don't have an account? <a href="{% url 'spinchannel:sign_up' %}">Sign up!</a></p> -->
+{% endblock content %}

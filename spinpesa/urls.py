@@ -17,12 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken import views
-from mpesa.urls import mpesa_urls  #  No module named 'requests
 
 from django.conf import settings
 from django.conf.urls.static import static
 
-admin.site.site_header = 'Daricash Admin'
+admin.site.site_header = 'Darucash Admin'
 # admin.site.index_title = ''
 
 urlpatterns = [
@@ -30,9 +29,11 @@ urlpatterns = [
     path('users/', include('users.urls',namespace='users')),
     path('account/', include('account.urls',namespace='accounts')),
     path('gwheel/', include('gwheel.urls',namespace='gwheels')),
-    path('spin/', include('spinchannel.urls',namespace='spinchannel')),
-    path('chat/', include('chat.urls',namespace='chat')),
-    path('mpesa/', include(mpesa_urls)),
+    path('spinchannel/', include('spinchannel.urls',namespace='spinchannel')),
+    path('cash_trans/', include('cash_trans.urls',namespace='cash_trans')),
+    path('authentication/', include('authentication.urls',namespace='authentication')),
+    path('mpesa/', include('mpesa_api.urls', 'mpesa')),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
+    path("", include("app.urls"))  # add this
     
 ] + static(settings.STATIC_URL)

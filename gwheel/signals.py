@@ -17,7 +17,7 @@ def on_results_save(sender, **kwargs):
     print(f'MESIN{message}')
 
     async_to_sync(channel_layer.group_send)(
-        "chat_lobby",
+        "daru_spin",
         {
             "type": "chat_message",
             "message": message

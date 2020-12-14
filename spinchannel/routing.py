@@ -1,8 +1,8 @@
-from channels.routing import route
-from .consumers import ws_connect, ws_disconnect
+from django.urls import re_path
 
+from . import consumers
 
-channel_routing = [
-    route('websocket.connect', ws_connect),
-    route('websocket.disconnect', ws_disconnect),
+websocket_urlpatterns = [
+    re_path(r'ws/spinchannel/', consumers.SpinConsumer.as_asgi()),
+    
 ]
