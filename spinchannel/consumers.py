@@ -28,7 +28,7 @@ def ws_disconnect(message):
 
 
 
-import json
+# import json
 from channels.generic.websocket import AsyncWebsocketConsumer,WebsocketConsumer
 from asgiref.sync import async_to_sync 
 
@@ -36,7 +36,7 @@ from asgiref.sync import async_to_sync
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'spinchannel_spin'
+        self.room_group_name = 'spin_spin'
 
         # Join room group
         await self.channel_layer.group_add(

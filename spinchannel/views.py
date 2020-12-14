@@ -153,3 +153,7 @@ def register_user(request):
     #         msg = 'Form is not valid'    
     # else:
     #     form = SignUpForm()
+
+
+def spin(request):
+    return render(request, 'spinchannel/daru_spin.html', {})

@@ -42,20 +42,7 @@
                     <div class="power_controls">
                         <br />
                         <br />
-                        <table class="power" cellpadding="10" cellspacing="0">
-                            <tr>
-                                <th align="center">Power</th>
-                            </tr>
-                            <tr>
-                                <td width="78" align="center" id="pw3" onClick="powerSelected(3);">High</td>
-                            </tr>
-                            <tr> 
-                                <td align="center" id="pw2" onClick="powerSelected(2);">Med</td>
-                            </tr>
-                            <tr>
-                                <td align="center" id="pw1" onClick="powerSelected(1);">Low</td>
-                            </tr>
-                        </table>
+ 
                         <br />
                         <img id="spin_button" src="+" alt="Spin" onClick="startSpin();" />
                         <br /><br />
@@ -75,7 +62,7 @@
             const chatSocket = new WebSocket(
                 'ws://'
                 + window.location.host
-                + '/ws/spin/'
+                + '/ws/chat/'
                 // + roomName
                 + '/'
             );
@@ -83,8 +70,8 @@
             chatSocket.onmessage = function(e) {
                 
                 const data = JSON.parse(e.data);
-
-                startSpinB(8);
+             
+                startSpinB(13);
                 
                 document.querySelector('#chat-log').value += (data.message + '\n');
             };
@@ -161,8 +148,8 @@
                 'animation' :           // Specify the animation to use.
                 {
                     'type'     : 'spinToStop',
-                    'duration' : 20,    // Duration in seconds.
-                    'spins'    : 5,     // Default number of complete spins.
+                    'duration' : 15,    // Duration in seconds.
+                    'spins'    : 4,     // Default number of complete spins.
                     // 'callbackFinished' : alertPrize,
                     'callbackSound'    : playSound,   // Function to call when the tick sound is to be triggered.
                     'soundTrigger'     : 'pin'        // Specify pins are to trigger the sound, the other option is 'segment'.
@@ -190,7 +177,7 @@
             }
 
             // Vars used by the code in this page to do power controls.
-            let wheelPower    = 6;
+            let wheelPower    = 10;
             let wheelSpinning = false;
 
      
