@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'chat',
     'mpesa_api',
     'cash_trans',
+    'app',
+    'authentication',
       
 ]
 
@@ -184,10 +186,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static'))
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
-MEDIA_UPLOAD_FOLDER = '%Y_%m_%d/'
+# STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static'))
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
+# MEDIA_UPLOAD_FOLDER = '%Y_%m_%d/'
+# TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")  # ROOT dir for templates
 
 
 JET_SIDE_MENU_COMPACT = True

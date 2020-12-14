@@ -32,7 +32,9 @@ urlpatterns = [
     path('spin/', include('spinchannel.urls',namespace='spinchannel')),
     path('chat/', include('chat.urls',namespace='chat')),
     path('cash_trans/', include('cash_trans.urls',namespace='cash_trans')),
+    path('authentication/', include('authentication.urls',namespace='authentication')),
     path('mpesa/', include('mpesa_api.urls', 'mpesa')),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
+    path("", include("app.urls"))  # add this
     
 ] + static(settings.STATIC_URL)
