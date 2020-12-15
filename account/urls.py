@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 # from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 from django.urls import path, include
+from .template_views import trans_log
 
 
 router = DefaultRouter()
@@ -21,6 +22,9 @@ urlpatterns = [
     # path('user/', UserRecordView.as_view(), name='users'),
     path('user_trans/_start=<int:start>&_limit=<int:limit>/_user_id=<int:pk>', views.TransactionView.as_view()),
     #path('rest-auth/', include('rest_auth.urls')),
+
+    # templates
+    path('trans_log/', trans_log, name="trans_log"),
 ]
 
 #posts?_start=$startIndex&_limit=$limit

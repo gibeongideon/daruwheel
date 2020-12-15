@@ -1,59 +1,52 @@
-{% extends "app/layouts/base.html" %}
+{% extends "core/layouts/base.html" %}
 
 {% block title %} Dashboard {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}
-<link rel="stylesheet" href="/static/users/css/main.css" type="text/css" />
-{% endblock stylesheets %}
+{% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
 
     <div class="row">
-              <div align="center">
-              <h2>Win real Cash with Daru Wheel Every 5 minutes!</h2>
-  
-              <br />
-              <table cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                      <td width="436" height="580" class="the_wheel" align="center" valign="center">
-                          <canvas id="canvas" width="434" height="434">
-                              <p align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
-                          </canvas>
-                      </td>
-                  </tr>
-              </table>
-              <img id="spin_button" src="+" alt="Spin" onClick="startSpin();" />
-              <input id="chat-message-input" type="text" size="100"><br>
-              <input id="chat-message-submit" type="button" value="serverSpin">
-
-              
-          </div>
-        
-            <div class="col-12">
-              <div class="card card-chart">
-            
-                <div class="card-body">
-                  <div class="chart-area">
-                    <canvas id="chartBig1"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-  
-
-    </div>
-
-
-    <div class="row">
       <div class="col-lg-6 col-md-12">
         <div class="card card-tasks">
-       
-          <!-- <div class="card-body "> -->
 
-          <!-- </div> -->
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td width="438" height="520" class="the_wheel" align="center" valign="center">
+                    <canvas id="canvas" width="434" height="434">
+                        <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
+                    </canvas>
+                </td>
+            </tr>
+        </table>
+
+        </div>
+        <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+          <label class="btn btn-sm btn-primary btn-simple active" id="0">
+            <input type="radio" name="options" checked>
+            <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Accounts</span>
+            <span class="d-block d-sm-none">
+              <i class="tim-icons icon-single-02"></i>
+            </span>
+          </label>
+          <label class="btn btn-sm btn-primary btn-simple" id="1">
+            <input type="radio" class="d-none d-sm-none" name="options">
+            <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Purchases</span>
+            <span class="d-block d-sm-none">
+              <i class="tim-icons icon-gift-2"></i>
+            </span>
+          </label>
+          <label class="btn btn-sm btn-primary btn-simple" id="2">
+            <input type="radio" class="d-none" name="options">
+            <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">Sessions</span>
+            <span class="d-block d-sm-none">
+              <i class="tim-icons icon-tap-02"></i>
+            </span>
+          </label>
         </div>
       </div>
+
       <div class="col-lg-6 col-md-12">
         <div class="card ">
           <div class="card-header">
@@ -193,48 +186,13 @@
 <script type="text/javascript" src="/static/users/js/TweenMax.min.js"></script>
 
 <script>
-  const chatSocket = new WebSocket(
-      'ws://'
-      + window.location.host
-      + '/ws/spinchannel/'
-      // + roomName
-      + '/'
-  );
 
-  chatSocket.onmessage = function(e) {
-      
-      const data = JSON.parse(e.data);
-   
-      startSpinB(13);
-      
-      document.querySelector('#chat-log').value += (data.message + '\n');
-  };
-
-  chatSocket.onclose = function(e) {
-      console.error('spin socket closed unexpectedly');
-  };
-
-  document.querySelector('#chat-message-input').focus();
-  document.querySelector('#chat-message-input').onkeyup = function(e) {
-      if (e.keyCode === 13) {  // enter, return
-          document.querySelector('#chat-message-submit').click();
-      }
-  };
-
-  document.querySelector('#chat-message-submit').onclick = function(e) {
-      const messageInputDom = document.querySelector('#chat-message-input');
-      const message = messageInputDom.value;
-      chatSocket.send(JSON.stringify({
-          'message': message
-      }));
-      messageInputDom.value = '';
-  };
 
   // Create new wheel object specifying the parameters at creation time.
   let theWheel = new Winwheel({
       'outerRadius'     : 212,        // Set outer radius so wheel fits inside the background.
       'innerRadius'     : 45,   
-      // 'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
+      'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
       'textFontSize'    : 24,         // Set default font size for the segments.
       'textOrientation' : 'vertical', // Make text vertial so goes down from the outside of wheel.
       'textAlignment'   : 'outer',    // Align text to outside of wheel.
@@ -242,41 +200,41 @@
       'segments'        :             // Define segments including colour and text.
       [                               // font size and test colour overridden on backrupt segments.
 
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
 
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
 
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#ffffff', 'text' :  'AVARAGE', 'textFontSize' : 16, 'textFillStyle' : '#00000'},// WHITE
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#ffffff', 'text' :  'AVARAGE', 'textFontSize' : 16, 'textFillStyle' : '#00000'},// WHITE
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
 
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
 
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},                  
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},                  
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
 
-         {'fillStyle' : '#ee1c24', 'text' : '600'},
-         {'fillStyle' : '#fff200', 'text' : '450'},
-         
-         {'fillStyle' : '#000000', 'text' : 'BLACK HOLE', 'textFontSize' : 12, 'textFillStyle' : '#ffffff'},
-         
+          {'fillStyle' : '#ee1c24', 'text' : '600'},
+          {'fillStyle' : '#fff200', 'text' : '450'},
+          
+          {'fillStyle' : '#000000', 'text' : 'BLACK HOLE', 'textFontSize' : 12, 'textFillStyle' : '#ffffff'},
+          
 
       ],
       'animation' :           // Specify the animation to use.
@@ -287,7 +245,7 @@
           // 'callbackFinished' : alertPrize,
           'callbackSound'    : playSound,   // Function to call when the tick sound is to be triggered.
           'soundTrigger'     : 'pin'   ,     // Specify pins are to trigger the sound, the other option is 'segment'.
-          // 'callbackAfter' : 'drawTriangle()'
+          'callbackAfter' : 'drawTriangle()'
       },
       'pins' :				// Turn pins on.
       {
@@ -357,7 +315,6 @@
   //     ctx.stroke();              // Complete the path by stroking (draw lines).
   //     ctx.fill();                // Then fill.
   // }
-
 </script>
 
 {% endblock javascripts %}

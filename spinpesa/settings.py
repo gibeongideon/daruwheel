@@ -53,9 +53,6 @@ INSTALLED_APPS = [
     'spinchannel',
     'mpesa_api',
     'cash_trans',
-    'app',
-    'authentication',
-      
 ]
 
 MIDDLEWARE = [
