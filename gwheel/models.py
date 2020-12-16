@@ -271,7 +271,8 @@ class OutCome(TimeStamp):
             return randrange(1,segment,2)
         else:
             return randrange(2,segment,2)
-
+            
+    @property
     def segment(self):
         return self.result_to_segment(results = self.result)# ,segment = 29) fro settings
 
@@ -279,6 +280,7 @@ class OutCome(TimeStamp):
         if not self.closed:
             if self.market.place_stake_is_active == False:
                 self.result = self.determine_result_algo
+                self.pointer = self.segment
                 self.closed =True
 
                 super().save(*args, **kwargs)

@@ -3,7 +3,9 @@
 {% block title %} Dashboard {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/users/css/main.css" type="text/css" />
+{% endblock stylesheets %}
 
 {% block content %}
 
@@ -13,13 +15,18 @@
 
           <table cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <td width="438" height="520" class="the_wheel" align="center" valign="center">
+                <td width="538" height="575" class="the_wheel" align="center" valign="center">
                     <canvas id="canvas" width="434" height="434">
                         <p style="{color: white}" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
                     </canvas>
                 </td>
             </tr>
         </table>
+
+        <img id="spin_button" src="+" alt="Spin" onClick="startSpin();" />
+        <input id="chat-message-input" type="text" size="100"><br>
+        <input id="chat-message-submit" type="button" value="serverSpin">
+
 
         </div>
         <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
@@ -186,7 +193,42 @@
 <script type="text/javascript" src="/static/users/js/TweenMax.min.js"></script>
 
 <script>
+const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/spinchannel/'
+        // + roomName
+        + '/'
+    );
 
+    chatSocket.onmessage = function(e) {
+        
+        const data = JSON.parse(e.data);
+     
+        startSpinB(data.message);
+        
+        document.querySelector('#chat-log').value += (data.message + '\n');
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('spin socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        messageInputDom.value = '';
+    };
 
   // Create new wheel object specifying the parameters at creation time.
   let theWheel = new Winwheel({
@@ -245,7 +287,7 @@
           // 'callbackFinished' : alertPrize,
           'callbackSound'    : playSound,   // Function to call when the tick sound is to be triggered.
           'soundTrigger'     : 'pin'   ,     // Specify pins are to trigger the sound, the other option is 'segment'.
-          'callbackAfter' : 'drawTriangle()'
+          // 'callbackAfter' : 'drawTriangle()'
       },
       'pins' :				// Turn pins on.
       {
