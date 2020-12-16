@@ -1,0 +1,90 @@
+{% extends "core/layouts/base.html" %}
+
+{% block title %} Stake {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<!-- <style>body{padding-top: 60px;}</style> -->
+
+<link href="/static/assets/css/bootstrap.css" rel="stylesheet" />
+
+<link href="/static/assets/css/login-register.css" rel="stylesheet" />
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- <body> -->
+    <div class="container">
+        <!-- <div class="row"> -->
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                 <a class="btn big-login" data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();">Bet</a>
+                 <!-- <a class="btn big-register" data-toggle="modal" href="javascript:void(0)" onclick="openRegisterModal();">Register</a> -->
+                </div>
+            <!-- <div class="col-sm-4"></div> -->
+        <!-- </div> -->
+
+
+		 <div class="modal fade login" id="loginModal">
+		      <div class="modal-dialog login animated">
+    		      <div class="modal-content">
+    		         <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Enter Amount and Submit</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="box">
+                             <div class="content">
+
+                                <div class="error"></div>
+                                <div class="form loginBox">
+                                    <form action="{% url 'spinchannel:daru_spin' %}" method="post">
+                                        {% csrf_token %}
+                                        <!-- field.user = user -->
+                                        {% for field in stake_form %}
+                                        
+                                          <div>
+                                            {{ field.label_tag }}
+                                            {{ field }}
+                                          </div>
+                                        {% endfor %}
+                                        <button type="submit">Place Stake</button>
+                                      </form>
+                                    <!-- {%for form in stake_form %}
+                                    {{form.label_tag}}
+                                    {{form}}
+                                    {%endfor%}
+                                    
+                                    <form method="" action="" accept-charset="UTF-8">
+                                    <select id="id_user" class="form-control" type="form" placeholder= 'selection' name="user"></select>
+                                    <input id="password" class="form-control" type="form" placeholder="Amount" name="amount">
+                                    <input class="btn btn-default btn-login" type="button" value="Place Stake" onclick="loginAjax()"> 
+                                    </form> -->
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+ 
+    		      </div>
+		      </div>
+		  </div>
+    </div>
+<!-- <script type="text/javascript">
+    $(document).ready(function(){
+        openLoginModal();
+    });
+</script> -->
+
+<!-- </body> -->
+
+        
+{% endblock content %}
+
+
+
+{% block javascripts %}
+<script src="/static/assets/js/jquery-1.10.2.js" type="text/javascript"></script>
+<script src="/static/assets/js/bootstrap.js" type="text/javascript"></script>
+<script src="/static/assets/js/login-register.js" type="text/javascript"></script>
+{% endblock javascripts %}

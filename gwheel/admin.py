@@ -35,6 +35,7 @@ class OutComeAdmin(admin.ModelAdmin):
     list_display = ('id','market','closed','result','pointer','determine_result_algo','segment','created_at','updated_at')
     list_display_links = ('id',)
     # list_editable = ('',)
+    readonly_fields =('closed','result','pointer')
 
 admin.site.register(OutCome, OutComeAdmin) 
 
