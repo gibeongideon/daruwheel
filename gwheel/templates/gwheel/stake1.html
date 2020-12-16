@@ -6,8 +6,8 @@
 {% load static %}
 
 <head>
+  <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> -->
 
-	<!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> -->
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -31,7 +31,15 @@
   <link href="{% static 'assets/demo/demo.css' %}" rel="stylesheet" />
 
   <!-- Specific Page CSS goes HERE  -->
-  {% block stylesheets %}{% endblock stylesheets %}
+  
+  {% block stylesheets %}
+
+  <link href="/static/assets/css/bootstrap.css" rel="stylesheet" />
+
+  <link href="/static/assets/css/login-register.css" rel="stylesheet" />
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  
+  {% endblock stylesheets %}
 
 </head>
 

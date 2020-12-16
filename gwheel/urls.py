@@ -2,6 +2,7 @@
 from rest_framework.routers import DefaultRouter
 # from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
+from .template_view import place_stake
 from django.urls import path, include
 
 
@@ -17,4 +18,6 @@ urlpatterns = [
     # path('user/', UserRecordView.as_view(), name='users'),
     # path('user_trans/_start=<int:start>&_limit=<int:limit>/_user_id=<int:pk>', views.TransactionView.as_view()),
     #path('rest-auth/', include('rest_auth.urls')),
+    # templates
+    path('place_stake', place_stake, name="place_stake"),
 ]
