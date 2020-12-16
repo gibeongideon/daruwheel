@@ -26,6 +26,20 @@
         <img id="spin_button" src="+" alt="Spin" onClick="startSpin();" />
         <input id="chat-message-input" type="text" size="100"><br>
         <input id="chat-message-submit" type="button" value="serverSpin">
+        
+  <!-- Pop up window -->
+        <form action="{% url 'spinchannel:daru_spin' %}" method="post">
+          {% csrf_token %}
+          <!-- field.user = user -->
+          {% for field in stake_form %}
+          
+            <div>
+              {{ field.label_tag }}
+              {{ field }}
+            </div>
+          {% endfor %}
+          <button type="submit">Place Stake</button>
+        </form>
 
 
         </div>
