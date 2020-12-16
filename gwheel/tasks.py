@@ -22,14 +22,14 @@ def control():
     
     id = max([obj.id for obj in WheelSpin.objects.all()])
     try:
-        from gwheel.models import WheelSpin ,Result
+        from gwheel.models import WheelSpin ,OutCome
         from core.models import BetSettingVar
    
         print('Processing Results and robbing gamblers accounts!! ')
         try:
-            Result.objects.create(market_id = id,cumgain_id =1 )  #  process result of last ma
+            OutCome.objects.create(market_id = id )  #  process result of last ma
         except Exception as e:
-            print('RESUURR',e)
+            print('OutCOMEerror',e)
             pass
 
         print('Creating Wheel Spin Instance')
