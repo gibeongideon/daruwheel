@@ -22,7 +22,7 @@ class WheelSpin(Market):
     # per_relief = models.FloatField(blank =True,null= True)
 
     def __str__(self):
-        return f'WheelSpin({self.id})'
+        return f'WheelSpin No:{self.id}'
 
 
     def market_selection_id_list(self):
@@ -147,6 +147,10 @@ class Stake (TimeStamp):
     @property
     def place_bet_is_active(self):
         return self.market.place_stake_is_active
+        
+    @property
+    def status(self):
+        return self.update_account_on_win_lose()
 
     def update_account_on_win_lose(self):
         selection = self.marketselection_id

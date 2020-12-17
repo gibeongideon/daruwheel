@@ -81,7 +81,7 @@ class Selection(TimeStamp):
     odds = models.FloatField(max_length=10 ,blank =True,null=True )
 
     def __str__(self):
-        return '{0}Select:{1}'.format(self.mrtype.name,self.name)
+        return f'{self.name}'
 
     def market_id(self):
         return self.mrtype
