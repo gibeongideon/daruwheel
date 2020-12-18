@@ -40,7 +40,7 @@
             <!-- <div class="row"> -->
                 <div class="col-sm-4"></div>
                 <div class="col-sm-4">
-                    <a class="btn big-login" data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();">Log in</a>
+                    <a class="btn big-login" data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();">Place Stake</a>
                     <!-- <a class="btn big-register" data-toggle="modal" href="javascript:void(0)" onclick="openRegisterModal();">Register</a> -->
                     </div>
                 <!-- <div class="col-sm-4"></div> -->
@@ -59,9 +59,33 @@
                                     <div class="content">
         
                                         <div class="error"></div>
-                                        <div class="form loginBox">
-                                          
+                                        <div class="form loginBox">    
+                                          <form action="{% url 'spinchannel:daru_spin' %}" method="post">
+                                            {% csrf_token %}
+                                        
+                                            <!-- {% for field in stake_form %}
                                             
+                                              <div>
+                                                {{ field.label_tag }}
+                                                {{ field }}
+                                              </div>
+                                            {% endfor %} -->
+                                            <!-- <div>
+                                              {{"user"}}
+                                              {{stake_form.user}}
+                                               </div> -->
+                                            <div>
+                                                {{"Selection:"}}
+                                                {{stake_form.marketselection}}
+                                                 </div>
+                                            <div>
+                                                  {{"Amount:"}}
+                                                  {{stake_form.amount}}
+                                                   </div>
+                                                                          
+                                            <button type="submit">Place Stake</button>
+                                          </form>
+
                                             <!-- <form method="" action="" accept-charset="UTF-8">
                                             <select id="id_user" class="form-control" type="form" placeholder= 'selection' name="user"></select>
                                             <input id="password" class="form-control" type="form" placeholder="Amount" name="amount">
@@ -233,7 +257,7 @@
     let theWheel = new Winwheel({
         'outerRadius'     : 212,        // Set outer radius so wheel fits inside the background.
         'innerRadius'     : 45,   
-        // 'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
+        'responsive'      : true, // Make wheel hollow so segments don't go all way to center.
         'textFontSize'    : 24,         // Set default font size for the segments.
         'textOrientation' : 'vertical', // Make text vertial so goes down from the outside of wheel.
         'textAlignment'   : 'outer',    // Align text to outside of wheel.
