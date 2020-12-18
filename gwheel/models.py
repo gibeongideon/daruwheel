@@ -125,7 +125,7 @@ class WheelSpin(Market):
 class Stake (TimeStamp):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
     market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='wheelspins',blank =True,null=True)
-    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections',blank =True,null=True)
+    marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections')
     current_bal = models.FloatField(max_length=10,default=0 )#R
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     # outcome = models.CharField(max_length=200,blank =True,null=True)

@@ -209,7 +209,11 @@ CELERY_BEAT_SCHEDULE = {
     'create_spin_wheel_market': { 
          'task': 'gwheel.tasks.create_spinwheel', 
          'schedule': crontab(minute= [0,5,10,15,20,25,30,35,40,45,50,55]),
-        },          
+        },
+    'create_spin_wheel_market': {
+         'task': 'gwheel.tasks.start_count_down', 
+         'schedule': crontab(minute= [0,5,10,15,20,25,30,35,40,45,50,55]),
+        }          
 }
 
 

@@ -2,6 +2,10 @@
 from time import sleep
 from celery import shared_task
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
 
 def countD(n, str1="Market Active till {} count down is ZERO."):
     countDown = n
@@ -53,3 +57,48 @@ def create_spinwheel():
     control()
     # countD((4.5*60))
     print('SPIN SPIN!! ')
+
+
+
+
+def countC(n, str1="Spin in {}"):
+    countDown = n
+    
+    while (countDown >= 0):
+        print('Channeling value')
+
+        cc = []
+        if countDown != 0:
+            channeled_timer(countDown)
+
+            cc.append(countDown)
+            print(str1.format(cc[0]),end='\r')
+            sleep(1)
+            cc.clear()
+            countDown = countDown - 1
+        else:
+            break 
+
+
+channel_layer = get_channel_layer()
+def channeled_timer(secondvalu):
+
+    # channel_layer = get_channel_layer()
+    print(f'MESIN{secondvalu}')
+
+    async_to_sync(channel_layer.group_send)(
+        "daru_spin",
+        {
+            "type": "timer_value",
+            "secondvalu": secondvalu,
+        }
+    )
+
+@shared_task
+def start_count_down():
+    ''' precise spin timer task'''
+    countC(300)
+   
+
+
+

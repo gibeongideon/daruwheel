@@ -7,13 +7,13 @@ from asgiref.sync import async_to_sync
 from time import sleep
 
 
-
 @receiver(post_save, sender=OutCome)
 def on_results_save(sender,instance, **kwargs):
     print('RESULT SAVES,INSIDE SIGNAL')
 
     resu = instance.pointer  # fix id
-    print(f'RESUUSS{resu}')
+    market_id = instance.market_id
+    print(f'RESUUSS{resu} marketID:{market_id}')
     
     try:
         channel_layer = get_channel_layer()
@@ -23,7 +23,8 @@ def on_results_save(sender,instance, **kwargs):
             "daru_spin",
             {
                 "type": "chat_message",
-                "message": resu
+                "message": resu,
+                "market_id":market_id,
             }
         )
     except Exception as ce:

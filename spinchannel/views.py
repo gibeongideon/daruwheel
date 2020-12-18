@@ -9,11 +9,20 @@ from gwheel.models import Stake
 def daru_spin(request):
 
     stake_form = StakeForm()
-    trans_logz =Stake.objects.filter(user =request.user)[:15]
+    trans_logz =Stake.objects.filter(user =request.user).order_by('-created_at')[:12]
     if request.method == 'POST':
-        # trans = Stake.objects.filter(user_bal= pk).order_by('-id')[start:end]# cool huh
-        stake_form = StakeForm(data=request.POST)
+        #QF
+        #is this secure# normal dic generated from imuttable dic//automatic user                
+        data = {}
+        data['user'] = request.user
+        data['marketselection'] = request.POST['marketselection']
+        data['amount'] = request.POST['amount'] 
+
+        stake_form = StakeForm(data=data)
+        # stake_form = StakeForm(data=request.POST)
+        
         if stake_form.is_valid():
+
             stake_form.save()
             print('STAKE DONE')
             # return redirect(reverse('cash_trans:trans_log'))
