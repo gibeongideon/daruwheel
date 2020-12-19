@@ -24,12 +24,13 @@ def control():
     from gwheel.models import WheelSpin
     # from core.models import BetSettingVar
     
-    id = max([obj.id for obj in WheelSpin.objects.all()])
+    
     try:
+        id = max([obj.id for obj in WheelSpin.objects.all()])
         from gwheel.models import WheelSpin ,OutCome
         from core.models import BetSettingVar
    
-        print('Processing Results and robbing gamblers accounts!! ')
+        print('Processing Results for gamblers accounts!! ')
         try:
             OutCome.objects.create(market_id = id )  #  process result of last ma
         except Exception as e:

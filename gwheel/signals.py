@@ -12,8 +12,8 @@ def on_results_save(sender,instance, **kwargs):
     print('RESULT SAVES,INSIDE SIGNAL')
 
     resu = instance.pointer  # fix id
-    market_id = instance.market_id
-    print(f'RESUUSS{resu} marketID:{market_id}')
+    # market_id = instance.market_id
+    # print(f'RESUUSS{resu} marketID:{market_id}')
     
     try:
         channel_layer = get_channel_layer()
@@ -24,7 +24,7 @@ def on_results_save(sender,instance, **kwargs):
             {
                 "type": "chat_message",
                 "message": resu,
-                "market_id":market_id,
+              
             }
         )
     except Exception as ce:

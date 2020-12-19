@@ -56,52 +56,53 @@ class SpinConsumer(AsyncWebsocketConsumer):
         }))
 
 
+# class TimerConsumer(AsyncWebsocketConsumer):
+#     async def connect(self):
+#         # self.room_name = self.scope['url_route']['kwargs']['room_name']
+#         self.room_group_name = 'daru_spin'
 
-class TimerConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        # self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'timer_spin'
+#         # Join room group
+#         await self.channel_layer.group_add(
+#             self.room_group_name,
+#             self.channel_name
+#         )
 
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+#         await self.accept()
 
-        await self.accept()
+#     async def disconnect(self, close_code):
+#         # Leave room group
+#         await self.channel_layer.group_discard(
+#             self.room_group_name,
+#             self.channel_name
+#         )
 
-    async def disconnect(self, close_code):
-        # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+#     # Receive message from WebSocket
+#     async def receive(self, text_data):
+#         text_data_json = json.loads(text_data)
+#         message = text_data_json['message']
+#         # market_id = text_data_json['market_id']
+#         print(f'MESWEB{message}')
 
-    # Receive message from WebSocket
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        secondvalu = text_data_json['secondvalu']
-        # market_id = text_data_json['market_id']
-        print(f'MESWEB{secondvalu}')
+#         # Send message to room group
+#         await self.channel_layer.group_send(
+#             self.room_group_name,
+#             {
+#                 'type': 'chat_message',
+#                 'message': message,
+#                 # 'market_id':market_id
+#             }
+#         )
 
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'timer_value',
-                'secondvalu': secondvalu,
-                # 'market_id':market_id
-            }
-        )
+#     # Receive message from room group
+#     async def chat_message(self, event):
+#         message = event['message']
+#         # segment = event['message']
 
+#         print(f'MESSO{message}')
 
-    async def timer_value(self, event):
-        secondvalu = event['secondvalu']
-
-        print(f'SECOND VALL:{secondvalu}')
-
-        # Send secondvalu to WebSocket
-        await self.send(text_data=json.dumps({
-            'secondvalu': secondvalu,
-
-        }))
+#         # Send message to WebSocket
+#         await self.send(text_data=json.dumps({
+#             'message': message,
+#             # 'seg':segment,
+  
+#         }))
