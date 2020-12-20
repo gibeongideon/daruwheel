@@ -67,3 +67,10 @@ def user_page(request):
  
     # return redirect(reverse('users:user_page'))
     return render(request, 'users/page-user.html',{'user': request.user})
+
+@login_required(login_url='/users/login/')
+def notification(request):
+    context={}
+    return render(request, 'users/notification.html',context)
+    
+

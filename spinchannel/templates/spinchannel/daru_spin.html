@@ -108,6 +108,32 @@
 
           <input id="chat-message-input" type="text" size="100"><br>
           <input id="chat-message-submit" type="button" value="serverSpin">
+
+        </div>
+        <div> 
+          <script>
+        function prinP(val){
+
+          document.write(val)
+        }
+        prinP('YE')
+        chatSocket.onmessage = function(e) {
+            
+            const dataz = JSON.parse(e.data);
+
+            if (dataz.message){
+                
+                // startSpinB(data.message);
+                prinP(dataz.message);
+                prinP('YE')
+                
+            }
+                 
+            document.querySelector('#chat-log').value += (data.message + '\n');
+        };
+                      
+          
+          </script>
         </div>
    
          
@@ -236,6 +262,8 @@
 <script type="text/javascript" src="/static/users/js/TweenMax.min.js"></script>
 
 <script>
+    
+    const datav = '';
     const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -247,9 +275,18 @@
         chatSocket.onmessage = function(e) {
             
             const data = JSON.parse(e.data);
-            if (data.message){
-              startSpinB(data.message);
+            const datav = JSON.parse(e.data);
 
+
+            if (data.message){
+                
+                startSpinB(data.message);
+
+                
+                // prinX(data.message);
+               
+
+                
             }
                  
             

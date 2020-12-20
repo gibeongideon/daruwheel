@@ -62,43 +62,43 @@ def create_spinwheel():
 
 
 
-def countC(n, str1="Spin in {}"):
-    countDown = n
+# def countC(n, str1="Spin in {}"):
+#     countDown = n
     
-    while (countDown >= 0):
-        print('Channeling value')
+#     while (countDown >= 0):
+#         print('Channeling value')
 
-        cc = []
-        if countDown != 0:
-            channeled_timer(countDown)
+#         cc = []
+#         if countDown != 0:
+#             channeled_timer(countDown)
 
-            cc.append(countDown)
-            print(str1.format(cc[0]),end='\r')
-            sleep(1)
-            cc.clear()
-            countDown = countDown - 1
-        else:
-            break 
+#             cc.append(countDown)
+#             print(str1.format(cc[0]),end='\r')
+#             sleep(1)
+#             cc.clear()
+#             countDown = countDown - 1
+#         else:
+#             break 
 
 
-channel_layer = get_channel_layer()
-def channeled_timer(secondvalu):
+# channel_layer = get_channel_layer()
+# def channeled_timer(secondvalu):
 
-    # channel_layer = get_channel_layer()
-    print(f'MESIN{secondvalu}')
+#     # channel_layer = get_channel_layer()
+#     print(f'MESIN{secondvalu}')
 
-    async_to_sync(channel_layer.group_send)(
-        "daru_spin",
-        {
-            "type": "timer_value",
-            "secondvalu": secondvalu,
-        }
-    )
+#     async_to_sync(channel_layer.group_send)(
+#         "daru_spin",
+#         {
+#             "type": "chat_message",
+#             "secondvalu": secondvalu,
+#         }
+#     )
 
-@shared_task
-def start_count_down():
-    ''' precise spin timer task'''
-    countC(300)
+# @shared_task
+# def start_count_down():
+#     ''' precise spin timer task'''
+#     countC(300)
    
 
 

@@ -30,3 +30,21 @@ def pages(request):
     
         html_template = loader.get_template( 'error-500.html' )
         return HttpResponse(html_template.render(context, request))
+
+
+
+@login_required(login_url="/users/login/")
+def icons(request):
+
+    return render(request, "core/ui-icons.html")
+
+
+@login_required(login_url="/users/login/")
+def maps(request):
+ 
+    return render(request, "core/ui-maps.html")
+
+@login_required(login_url="/users/login/")
+def topo(request):
+ 
+    return render(request, "core/ui-typography.html")
