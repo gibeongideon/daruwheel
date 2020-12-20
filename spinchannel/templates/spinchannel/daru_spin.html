@@ -16,6 +16,7 @@
 {% block content %}
 
     <div class="row">
+      {{data.market_id}}
         <div class="col-lg-6 col-md-12">
           <div class="card card-chart">
               <!-- wheel -->
@@ -80,7 +81,8 @@
                                                  </div>
                                             <div>
                                                   {{"Amount:"}}
-                                                  {{stake_form.amount}}
+                                                  <!-- {{stake_form.amount}} -->
+                                                  <input id="amount_id" class="form-control" type="form" placeholder="Amount" name="amount">
                                                    </div>
                                                                           
                                             <button type="submit">Place Stake</button>
@@ -103,6 +105,35 @@
 
         <div>
           <img id="spin_button" src="/static/users/img/spin_img/spin_on.png" alt="Spin" onClick="startSpin();" />
+
+          <input id="chat-message-input" type="text" size="100"><br>
+          <input id="chat-message-submit" type="button" value="serverSpin">
+
+        </div>
+        <div> 
+          <script>
+        function prinP(val){
+
+          document.write(val)
+        }
+        prinP('YE')
+        chatSocket.onmessage = function(e) {
+            
+            const dataz = JSON.parse(e.data);
+
+            if (dataz.message){
+                
+                // startSpinB(data.message);
+                prinP(dataz.message);
+                prinP('YE')
+                
+            }
+                 
+            document.querySelector('#chat-log').value += (data.message + '\n');
+        };
+                      
+          
+          </script>
         </div>
    
          
@@ -169,7 +200,7 @@
 
     <!-- next -->
 
-
+<!-- 
     <div class="row">
         
         <div class="col-lg-6 col-md-12">
@@ -217,7 +248,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
 {% endblock content %}
 
@@ -231,6 +262,8 @@
 <script type="text/javascript" src="/static/users/js/TweenMax.min.js"></script>
 
 <script>
+    
+    const datav = '';
     const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -242,8 +275,20 @@
         chatSocket.onmessage = function(e) {
             
             const data = JSON.parse(e.data);
-        
-            startSpinB(data.message);
+            const datav = JSON.parse(e.data);
+
+
+            if (data.message){
+                
+                startSpinB(data.message);
+
+                
+                // prinX(data.message);
+               
+
+                
+            }
+                 
             
             document.querySelector('#chat-log').value += (data.message + '\n');
         };
@@ -252,6 +297,22 @@
             console.error('spin socket closed unexpectedly');
         };
 
+        document.querySelector('#chat-message-input').focus();
+        
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
 
     // Create new wheel object specifying the parameters at creation time.
     let theWheel = new Winwheel({
@@ -265,38 +326,38 @@
         'segments'        :             // Define segments including colour and text.
         [                               // font size and test colour overridden on backrupt segments.
 
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
 
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
 
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
             {'fillStyle' : '#ffffff', 'text' :  'AVARAGE', 'textFontSize' : 16, 'textFillStyle' : '#00000'},// WHITE
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
 
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
 
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},                  
-            {'fillStyle' : '#fff200', 'text' : '450'},
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},                  
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
 
-            {'fillStyle' : '#ee1c24', 'text' : '600'},
-            {'fillStyle' : '#fff200', 'text' : '450'},
+            {'fillStyle' : '#ee1c24', 'text' : 'x2'},
+            {'fillStyle' : '#fff200', 'text' : 'x2'},
             
             {'fillStyle' : '#000000', 'text' : 'BLACK HOLE', 'textFontSize' : 12, 'textFillStyle' : '#ffffff'},
             

@@ -29,19 +29,39 @@
             </a>
           </li>
           <li>
-            <a href="/ui-notifications.html">
+            <a href="{% url 'users:notification' %}">
               <i class="tim-icons icon-bell-55"></i>
               <p>My Company</p>
             </a>
           </li>
           <li>
-            <a href="/ui-maps.html">
+
+            <a href="{% url 'account:trans_log' %}">
               <i class="tim-icons icon-pin"></i>
               <p>Transactions Log</p>
             </a>
           </li>
           <li>
-            <a href="/ui-notifications.html">
+            <a href="{% url 'core:maps' %}">
+              <i class="tim-icons icon-pin"></i>
+              <p>maps</p>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'core:icons' %}">
+              <i class="tim-icons icon-pin"></i>
+              <p>icons</p>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'core:maps' %}">
+              <i class="tim-icons icon-pin"></i>
+              <p>topo</p>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'users:notification' %}">
               <i class="tim-icons icon-bell-55"></i>
               <p>Notifications</p>
             </a>
@@ -59,14 +79,14 @@
             </a>
           </li>
           <li>
-            <a href="/ui-typography.html">
+            <a href="{% url 'core:topo' %}">
               <i class="tim-icons icon-align-center"></i>
               <p>Share</p>
             </a>
           </li>
 
           <li>
-            <a href="/page-rtl-support.html">
+            <a href="{% url 'core:support' %}">
               <i class="tim-icons icon-world"></i>
               <p>Support</p>
             </a>

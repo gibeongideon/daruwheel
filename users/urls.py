@@ -1,7 +1,7 @@
 from .api_views import UserRecordView,UserIDView,SetPasswordViewSet
 
 from rest_framework.routers import DefaultRouter
-from .template_views import login_view, register_user,logout,user_page
+from .template_views import login_view, register_user,logout,user_page,notification
 from django.urls import path , include
 
 
@@ -24,4 +24,9 @@ urlpatterns = [
     path('register/', register_user, name="register"),
     path('logout/', logout, name="logout"),
     path('user_page/', user_page, name="user_page"),
+    path('notification', notification, name="notification"),
 ]
+
+
+
+

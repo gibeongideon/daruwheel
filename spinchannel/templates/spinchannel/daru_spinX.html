@@ -85,7 +85,18 @@
 
           <input id="chat-message-input" type="text" size="100"><br>
           <input id="chat-message-submit" type="button" value="serverSpin">
+          <div>
 
+            <script>
+            
+              document.write(data.secondvalu);
+
+         </script>
+
+          </div>
+
+
+          
 
       </div> 
 
@@ -248,6 +259,8 @@ const chatSocket = new WebSocket(
         const data = JSON.parse(e.data);
      
         startSpinB(data.message);
+    
+        
         
         document.querySelector('#chat-log').value += (data.message + '\n');
     };

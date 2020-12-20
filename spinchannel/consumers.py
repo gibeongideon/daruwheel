@@ -35,18 +35,18 @@ class SpinConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
             }
         )
 
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
-        segment = event['message']
-        print(f'MESSO{message}')
+        # segment = event['message']
+        # print(f'MESSO{message}')
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
-            'seg':segment
+            # 'seg':segment
         }))
