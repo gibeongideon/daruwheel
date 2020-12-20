@@ -1,7 +1,7 @@
 from rest_framework import viewsets
-from users.models import SetPasswordModel
+from .models import SetPasswordModel
 
-from users.serializers import UserSerializer,SetPasswordSerializer
+from .serializers import UserSerializer,SetPasswordSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status

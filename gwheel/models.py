@@ -20,6 +20,8 @@ class WheelSpin(Market):
     market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
 
     # per_relief = models.FloatField(blank =True,null= True)
+    class Meta:
+        db_table = "d_wheel_markets"
 
     def __str__(self):
         return f'WheelSpin No:{self.id}'

@@ -3,19 +3,6 @@ from django.contrib.auth.models import User
 from core.models import TimeStamp,BetSettingVar
 
 
-# def sc_logger(**kwargz):  # complicated for nothing! but i love it/Violate The Zen of Python, by Tim Peters//try to write simple code
-#     ''' bool :has_record
-#         int : user_id   
-#         int : amount 
-#         str : trans_type '''
-    
-#     if not kwargz['has_record']:
-#         TransactionLog.objects.create(user_id = kwargz['user_id'],amount= kwargz['amount'] ,trans_type = kwargz['trans_type'])
-#         return True
-#     else:
-#         return
-
-    
 class Account(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -27,6 +14,7 @@ class Account(TimeStamp):
     def __str__(self): 
         return 'Account No: {0} Balance: {1}'.format(self.user,self.balance)
     class Meta:
+        db_table = "d_accounts"
         ordering = ('-user_id',)
 
 class RefCredit(TimeStamp):
@@ -37,6 +25,9 @@ class RefCredit(TimeStamp):
     closed = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
     approved = models.BooleanField(default =False,blank =True ,null= True)
+
+    class Meta:
+        db_table = "d_refcredits"
     
     @property
     def refer_balance(self):
@@ -114,6 +105,9 @@ class TransactionLog(TimeStamp):
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     now_bal = models.DecimalField(('now_bal'), max_digits=12, decimal_places=2, default=0)
     trans_type = models.CharField(max_length=200 ,blank =True,null=True)
+
+    class Meta:
+        db_table = "d_trans_logs"
     
     def __str__(self):
         return 'User {0}:{1}'.format(self.user,self.amount)
@@ -148,6 +142,9 @@ class CashDeposit(TimeStamp):
     source_no = models.IntegerField(blank =True ,null= True)
     deposited = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
+
+    class Meta:
+        db_table = "d_deposits"
     
     def __str__(self):
         return str(self.amount)
@@ -204,6 +201,9 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     has_record = models.BooleanField(blank= True,null =True)
     active = models.BooleanField(default =True,blank= True,null =True)
     # charges_fee = models.FloatField(default =0 ,blank = True,null= true)
+
+    class Meta:
+        db_table = "d_withrawals"
 
     def __str__(self):
         return str(self.amount)
