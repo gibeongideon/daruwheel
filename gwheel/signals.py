@@ -11,19 +11,19 @@ from time import sleep
 def on_results_save(sender,instance, **kwargs):
     print('RESULT SAVES,INSIDE SIGNAL')
 
-    resu = instance.pointer  # fix id
+    pointer_val = instance.pointer  # fix id
     # market_id = instance.market_id
     # print(f'RESUUSS{resu} marketID:{market_id}')
     
     try:
         channel_layer = get_channel_layer()
-        print(f'MESIN{resu}')
+        print(f'MESIN{pointer_val}')
 
         async_to_sync(channel_layer.group_send)(
             "daru_spin",
             {
-                "type": "chat_message",
-                "message": resu,
+                "type": "spin_pointer",
+                "pointer": pointer_val,
               
             }
         )

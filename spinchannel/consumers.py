@@ -1,52 +1,71 @@
-
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer,WebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer#,WebsocketConsumer
 from asgiref.sync import async_to_sync 
 
 
 class SpinConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'daru_spin'
+        # self.spin_name = self.scope['url_route']['kwargs']['spin_name']
+        self.spin_group_name = 'daru_spin'
 
-        # Join room group
+        # Join spin group
         await self.channel_layer.group_add(
-            self.room_group_name,
+            self.spin_group_name,
             self.channel_name
         )
 
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave room group
+       
         await self.channel_layer.group_discard(
-            self.room_group_name,
+            self.spin_group_name,
             self.channel_name
         )
 
-    # Receive message from WebSocket
-    async def receive(self, text_data):
+    # Receive pointer from WebSocket
+    async def receive(self, text_data): # not needed if FrontEnd is not communicating/Our case
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        print(f'MESWEB{message}')
+        pointer = text_data_json['pointer']
 
-        # Send message to room group
+        # print(f'MESWEB{pointer}')
+
+        # Send pointer to spin group
         await self.channel_layer.group_send(
-            self.room_group_name,
+            self.spin_group_name,
             {
-                'type': 'chat_message',
-                'message': message,
+                'type': 'spin_pointer',
+                'pointer': pointer,
             }
         )
 
-    # Receive message from room group
-    async def chat_message(self, event):
-        message = event['message']
-        # segment = event['message']
-        # print(f'MESSO{message}')
+    # Receive pointer from spin group
+    async def spin_pointer(self, event):
+        pointer = event['pointer']
+        # secondvalu = event['secondvalu']
 
-        # Send message to WebSocket
+        print(f'SPINNER{ pointer}')
+
+        # Send pointer to WebSocket
         await self.send(text_data=json.dumps({
-            'message': message,
-            # 'seg':segment
+            'pointer': pointer,
+            # 'second_valu':secondvalu
+        }))
+
+    # Receive pointer from spin group
+    async def second_value(self, event):
+        secondvalu = event['secondvalu']
+        # mssg = ''
+        # if secondvalu >50:
+        #     mssg ='Betting is Active'
+        # else:
+        #     mssg ='Wait for next Market'
+
+
+        # print(f'TIMER:{secondvalu}')
+
+        # Send secondvalu to WebSocket
+        await self.send(text_data=json.dumps({
+            'secondvalu': secondvalu,
+            # 'mssg':mssg,
         }))
