@@ -18,19 +18,16 @@ def countD(n, str1="Market Active till {} count down is ZERO."):
             break 
 
 
-
-def countC(n, str1="Spin in {}"):
+def countC(n):
     countDown = n
 
     while (countDown >= 0):
-        # print('Channeling value')
-
         cc = []
         channeled_timer(countDown)
+        sleep(1)
         if countDown != 0:
             cc.append(countDown)
-            print(str1.format(cc[0]),end='\r')
-            sleep(1)
+            # sleep(1)
             cc.clear()
             countDown = countDown - 1
         else:
@@ -41,20 +38,16 @@ def spin_manager():
     from gwheel.models import WheelSpin
     from gwheel.models import WheelSpin ,OutCome
     from core.models import BetSettingVar
-    # from core.models import BetSettingVar
+
     try:
         id = max([obj.id for obj in WheelSpin.objects.all()])
-        print('Processing Results for gamblers accounts!! ')
         try:
             OutCome.objects.create(market_id = id)  #  process result of last ma
         except Exception as e:
-            print('OutCOMEerror',e)
             pass
-        print('Creating Wheel Spin Instance')
         sleep(2)
         WheelSpin.objects.create(id = id+1) # create WheeSpin of id current +1
-        print(f'Market Instance of ID {id+1} created')
-        # countD((sleep_time*60))
+  
         id =id +1
     except Exception as e:
         print('CONTROL ERROR',e)

@@ -13,7 +13,7 @@ admin.site.register(WheelSpin, WheelSpinAdmin)
 
 
 class StakeAdmin(admin.ModelAdmin):
-    list_display = ('id','user','market','marketselection','account_bal','current_bal','amount','stake_placed','has_record','update_account_on_win_lose','created_at','updated_at')
+    list_display = ('id','user','market','marketselection','current_bal','amount','stake_placed','has_record','update_account_on_win_lose','created_at','updated_at')
     list_display_links = ('user',)
     search_fields = ('user',)
     # list_editable = ('outcome',)
@@ -21,7 +21,6 @@ class StakeAdmin(admin.ModelAdmin):
     readonly_fields = ('current_bal','market')
 
 admin.site.register(Stake, StakeAdmin)
-
 
 
 class CumulativeGainAdmin(admin.ModelAdmin):
@@ -40,14 +39,9 @@ class OutComeAdmin(admin.ModelAdmin):
 admin.site.register(OutCome, OutComeAdmin) 
 
 
-
-
-
 class ResultAdmin(admin.ModelAdmin):
-    list_display = ('id','closed','market','resu','gain','created_at','updated_at',)
+    list_display = ('id','closed','market','resu','gain','return_per','created_at','updated_at',)
     list_display_links = ('id',)
     # list_editable = ('closed',)
 
 admin.site.register(Result, ResultAdmin) 
-
-

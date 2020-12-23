@@ -16,14 +16,13 @@
 {% block content %}
 
     <div class="row">
-      {{data.market_id}}
         <div class="col-lg-6 col-md-12">
           <div class="card card-chart">
 
               <!-- wheel -->
               <div align="center">
-                <!-- <h6>Status:<span id="mssg"></span></h6> -->
-                <p class='text-info'>Next Spin in:<h1><span id="dtim"></span></h1></h6>
+                <h6>Market:<span id="market"></span></h6>
+                <p class='text-info'>Next Spin<h1><span id="dtim"></span></h1></p>
 
                 <table cellpadding="0" cellspacing="0" border="0">
                   <tr>
@@ -35,8 +34,12 @@
                   </tr>
                 </table>
               </div>>
+
+              <div class="col-sm-4"> </div>
+
+
               <!-- wheel -->
-          
+        
           </div>
 
           <!-- bet -->
@@ -61,26 +64,14 @@
                             <div class="modal-body">
                                 <div class="box">
                                     <div class="content">
-        
                                         <div class="error"></div>
                                         <div class="form loginBox">    
                                           <form action="{% url 'spinchannel:daru_spin' %}" method="post">
                                             {% csrf_token %}
                                         
-                                            <!-- {% for field in stake_form %}
-                                            
-                                              <div>
-                                                {{ field.label_tag }}
-                                                {{ field }}
-                                              </div>
-                                            {% endfor %} -->
-                                            <!-- <div>
-                                              {{"user"}}
-                                              {{stake_form.user}}
-                                               </div> -->
                                             <div>
-                                                {{"Selection:"}}
-
+                                              <div> {{"Selection:"}}</div>
+                                            
                                                 {{stake_form.marketselection}}
                                                  </div>
                                             <div>
@@ -107,12 +98,16 @@
               </div>
         </div>
 
-        <div>
+        <!-- <div>
           <img id="spin_button" src="/static/users/img/spin_img/spin_on.png" alt="Spin" onClick="startSpin();" />
 
           <input id="spin-pointer-input" type="text" size="100"><br>
           <input id="spin-pointer-submit" type="button" value="serverSpin">
 
+        </div> -->
+        <div class="card-body">
+
+          
         </div>
          
       </div>  <!-- raw -->
@@ -239,7 +234,8 @@
 <script type="text/javascript" src="/static/users/js/Winwheel.js"></script>
 <script type="text/javascript" src="/static/users/js/TweenMax.min.js"></script>
 
-<script>
+<script> 
+    
     
     const spinSocket = new WebSocket(
             'ws://'
@@ -273,10 +269,11 @@
                 // document.getElementById('dsec').textContent = data.secondvalu -secc;   
  
             }
-            // if (data.mssg){
-            //    console.log(data.mssg)
-            //    document.getElementById('mssg').textContent =data.mssg;
-            // }
+            if (data.market){
+              //  console.log(data.mssg);
+               const mrkt = data.market;
+               document.getElementById('market').textContent = mrkt;
+            }
 
                  
             // document.querySelector('#spin-log').value += (data.pointer + '\n');

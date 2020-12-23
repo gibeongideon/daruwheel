@@ -69,3 +69,14 @@ class SpinConsumer(AsyncWebsocketConsumer):
             'secondvalu': secondvalu,
             # 'mssg':mssg,
         }))
+    # Receive pointer from spin group
+    async def market_info(self, event):
+        market = event['market']
+
+        print(f'MAKO {market}')
+        
+
+        # Send pointer to WebSocket
+        await self.send(text_data=json.dumps({
+            'market':market
+        }))

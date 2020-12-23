@@ -6,15 +6,13 @@ from datetime import timedelta  ,datetime
 from random import randint
 from django.utils import timezone
 from core.models import TimeStamp,BetSettingVar,Market,MarketType,Selection 
-from account.models import Account,TransactionLog,RefCredit
+from account.models import RefCredit
+from core.models import BetSettingVar
+
+from account.functions import update_account_bal,current_account_bal ,log_record
 
 
-
-set_up =  BetSettingVar.objects.get(id =1)
-
-def log_record(user_id,amount,trans_type):
-    TransactionLog.objects.update_or_create(user_id =user_id,amount= amount ,trans_type = trans_type)
-
+set_up =  BetSettingVar.objects.get(id =1) # adjustable settings variables
 
 class WheelSpin(Market): 
     market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
@@ -93,7 +91,7 @@ class WheelSpin(Market):
 
     @property
     def gain_after_relief(self):
-        per_to_return = set_up.per_retun
+        per_to_return = 0#set_up.per_retun
         return ((100 - per_to_return)/100)*float(self.offset)
 
 
@@ -136,15 +134,7 @@ class Stake (TimeStamp):
     has_record = models.BooleanField(blank =True,null=True)
 
     def __str__(self):
-        return 'Stake:{0} for:{1}'.format(self.amount,self.user)
-
-    @property
-    def account_bal(self):
-        try:
-            ac_bal = float(Account.objects.get(user_id =self.user_id).balance)
-            return ac_bal
-        except Exception as e:
-            return e   
+        return 'Stake:{0} for:{1}'.format(self.amount,self.user)  
 
     @property
     def place_bet_is_active(self):
@@ -172,24 +162,26 @@ class Stake (TimeStamp):
             
         except Exception as e:
             print('GERR',e)
-    
+
+
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on staking  '''
         if not self.stake_placed:
             market_id = max((obj.id for obj in WheelSpin.objects.all())) #  check if generator can help #ER/empty gen
             this_wheelspin = WheelSpin.objects.get(id =market_id )
 
-
             if this_wheelspin.place_stake_is_active:# 
 
                 self.market = this_wheelspin
                 try:
-                    ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
-                    if self.amount <= ctotal_balanc:
+                    current_user_account_bal = current_account_bal(self.user.id) # F2
+                    print(f'USER bal{current_user_account_bal}')
+
+                    if self.amount <= current_user_account_bal: # no staking more than account balance
                         if not self.stake_placed:
-                            new_bal = ctotal_balanc - self.amount
+                            new_bal = current_user_account_bal - float(self.amount)
                             self.current_bal = new_bal
-                            Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
+                            update_account_bal(self.user_id,new_bal)# F3
                             self.stake_placed = True
                     
                     else: 
@@ -205,14 +197,12 @@ class Stake (TimeStamp):
                 return # no saving record if market is inactive
 
             try:
-
                 if not self.has_record:
                     log_record(self.user_id,self.amount,'Stake')
                     
                     self.has_record = True
             except:
                 pass
-
 
             super().save(*args, **kwargs)
 
@@ -235,16 +225,6 @@ class CumulativeGain(TimeStamp):
             return e
 
 
-# def result_to_segment(results = None, segment=29):
-#     from random import randint, randrange
-#     if results is None:
-#         results = randint(1,2)
-#     if results ==1:
-#         print(randrange(1,segment,2))
-#         return randrange(1,segment,2)
-#     else:
-#         print(randrange(2,segment,2))
-#         return randrange(2,segment,2)
 
 class OutCome(TimeStamp):
     market  = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='marketoutcomes',blank =True,null= True)
@@ -295,10 +275,6 @@ class OutCome(TimeStamp):
 
 
 
-
-
-
-
 class Result(TimeStamp):
 
     market = models.OneToOneField(WheelSpin,on_delete=models.CASCADE,related_name='rmarkets',blank =True,null= True)
@@ -327,24 +303,6 @@ class Result(TimeStamp):
 
         except Exception as e:
             return  e
-
-    def resu_velocity_map(self):
-        from random import randint
-        red1= randint(7000,7500)
-        # red2= randint(7700,8200)
-        # red3= randint(8300,8600)
-        # red4= randint(8700,8900)
-        
-
-        white1= randint(7000,7500)
-        # white2= randint(7700,8200)
-        # white3= randint(8300,8600)
-        # white4= randint(8700,8900)
-
-        if self.determine_result_algo ==2:
-            return  red1
-        else:
-            return white1
 
     @staticmethod
     def per_returnn(all_gain,userstake,all_lose_stake,per_to_return):  ##CRITICAL FUCTION/MUST WORK PROPERLY
@@ -380,9 +338,9 @@ class Result(TimeStamp):
             print('REFER ERRRRCHeck',e)
 
     def update_acc_n_bal_record(self,user_id,new_bal,rem_credit,trans_type):
-        try:          
-            Account.objects.filter(user_id =user_id).update(balance= new_bal)
-            log_record(user_id,rem_credit,trans_type)
+        try: 
+            update_account_bal(user_id,new_bal) #F3         
+            log_record(user_id,rem_credit,trans_type) #F1
         
         except Exception as e:
             print('RESUUUUp',e)
@@ -394,7 +352,7 @@ class Result(TimeStamp):
             user_id = this_user_stak_obj.user_id  ####
             amount = float(this_user_stak_obj.amount)
             odds = float(this_user_stak_obj.marketselection.odds)
-            per_for_referer = 5  # Settings
+            per_for_referer = set_up.refer_per  # Settings
 
             win_amount = amount *odds
             print(f'win_amount{win_amount},user{user_id}')
@@ -415,6 +373,7 @@ class Result(TimeStamp):
             all_gain = float(self.market.offset) # FIX
             userstake =  float(this_user_stak_obj.amount)
  
+
             if self.resu == 2:
                 all_lose_stake = float(self.market.black_bet_amount)
             elif self.resu ==1:
@@ -437,7 +396,7 @@ class Result(TimeStamp):
                     user_id = _stake.user_id
                     all_stakes_of_this_user = Stake.objects.filter(id = _stake.id )#R
                     for  user_stak in all_stakes_of_this_user: # 
-                        ctotal_balanc = float(Account.objects.get(user_id = user_id).balance)#R
+                        ctotal_balanc =current_account_bal(user_id) #F2
 
                         self.update_winner_losser(user_id,user_stak,ctotal_balanc) ###M
     
