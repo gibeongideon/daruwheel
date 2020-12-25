@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from core.models import TimeStamp,BetSettingVar
-
-
+# from .functions import log_record ##NO circular import
 class Account(TimeStamp):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -16,7 +15,6 @@ class Account(TimeStamp):
     class Meta:
         db_table = "d_accounts"
         ordering = ('-user_id',)
-
 class RefCredit(TimeStamp):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
@@ -25,7 +23,6 @@ class RefCredit(TimeStamp):
     closed = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
     approved = models.BooleanField(default =False,blank =True ,null= True)
-
     class Meta:
         db_table = "d_refcredits"
     
@@ -37,7 +34,6 @@ class RefCredit(TimeStamp):
     def min_redeam(self):
         return BetSettingVar.objects.get(id=1).min_redeem_refer_credit #auto create
 
-
     def update_refer_balance(self):
         try:
             new_bal = self.refer_balance + float(self.amount)
@@ -46,35 +42,23 @@ class RefCredit(TimeStamp):
             self.closed = True
             
         except Exception as e:
-            pass
             print('update_refer_balance',e)
-
+            pass
+            
     def tranfer_to_main_account(self):
         try:
-
-            main_balance= float(Account.objects.get(user_id = self.user_id).balance)
+            main_balance= current_account_bal_of(self.user_id)#F 
             main_new_bal = self.refer_balance + main_balance
 
             Account.objects.filter(user_id= self.user_id).update(refer_balance= 0)
-            Account.objects.filter(user_id= self.user_id).update(balance= main_new_bal)
-
-            TransactionLog.objects.create(user_id =self.user_id,amount= self.refer_balance ,trans_type = 'RDM')
-
+            update_account_bal_of(self.user_id,main_new_bal) #F
+            log_record(self.user_id,self.refer_balance,'RDM') #F
             self.closed = True
 
         except Exception as e:
             print('tranfer_to_main_account2',e)
             pass
-        self.closed = True
-
-    def log_record(self):
-        try:
-            TransactionLog.objects.create(user_id = self.user_id,amount= self.amount ,trans_type = 'RC')
-            self.has_record = True
-        except Exception as e:
-            print('has Record err',e)
-            pass
-        
+        self.closed = True        
     
     def save(self, *args, **kwargs):
 
@@ -91,7 +75,7 @@ class RefCredit(TimeStamp):
                     self.tranfer_to_main_account()
 
             if not self.has_record:
-                self.log_record()
+                log_record(self.user_id,self.amount,'RC')
 
         except Exception as e:
             print('RefCredit:',e)
@@ -99,47 +83,37 @@ class RefCredit(TimeStamp):
 
         super().save(*args, **kwargs)
 
-
 class TransactionLog(TimeStamp):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     now_bal = models.DecimalField(('now_bal'), max_digits=12, decimal_places=2, default=0)
-    trans_type = models.CharField(max_length=200 ,blank =True,null=True)
-
+    trans_type = models.CharField(max_length=100 ,blank =True,null=True)
     class Meta:
         db_table = "d_trans_logs"
+        ordering = ('-created_at',)
     
     def __str__(self):
-        return 'User {0}:{1}'.format(self.user,self.amount)
-
-    class Meta:
-        ordering = ('-created_at',)
+        return 'User {0}:{1}'.format(self.user,self.amount) 
 
     @property
     def account_bal(self):
-        try:
-            return Account.objects.get(user_id =self.user_id).balance
+        return current_account_bal_of(self.user_id) #F  Account.objects.get(user_id =self.user_id).balance
         
-        except Exception as e:
-            return e   
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         if not self.pk:
             try:
                 self.now_bal = self.account_bal 
-
             except Exception as e:
                 print('TransactionLog ERROR:',e)
                 pass
 
         super().save(*args, **kwargs)
 
-
 class CashDeposit(TimeStamp):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
-    source_no = models.IntegerField(blank =True ,null= True)
     deposited = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
 
@@ -151,37 +125,22 @@ class CashDeposit(TimeStamp):
     
     @property
     def current_bal(self): 
-        try:
-            return Account.objects.get(user_id =self.user_id).balance
+        return current_account_bal_of(self.user_id)
             
-        except Exception as e:
-            return e
-
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
         try:
-            if not self.user_id: # create  user on deposit  and account
-            
-                created_user_name = str(self.source_no)
-                User.objects.create_user(username = created_user_name ,password ='27837185gg') # FIXED with create_user instead of create
-                self.user_id = User.objects.get(username = created_user_name).id
 
             if not self.deposited:
-                try:
-                    Account.objects.get(user_id = self.user_id)  # if  Account matching query does not exist
-                except:
-                    Account.objects.create(user_id = self.user_id)  # create account
-
-                ctotal_balanc = Account.objects.get(user_id = self.user_id).balance
+                ctotal_balanc = current_account_bal_of(self.user_id) #F
                 new_bal = ctotal_balanc + self.amount
-
-                Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
+                update_account_bal_of(self.user_id,new_bal) #F
                 self.deposited = True
 
             try:
                 if not self.has_record:
-                    TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Shop deposit')
+                    log_record(self.user_id,self.amount,'Shop Deposit')
                     self.has_record = True
             except  Exception as e:
                 pass
@@ -192,7 +151,6 @@ class CashDeposit(TimeStamp):
 
         super().save(*args, **kwargs)
 
-
 class CashWithrawal(TimeStamp): # sensitive transaction
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0) 
@@ -200,7 +158,6 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     withrawned = models.BooleanField(blank= True,null =True)
     has_record = models.BooleanField(blank= True,null =True)
     active = models.BooleanField(default =True,blank= True,null =True)
-    # charges_fee = models.FloatField(default =0 ,blank = True,null= true)
 
     class Meta:
         db_table = "d_withrawals"
@@ -239,26 +196,19 @@ class CashWithrawal(TimeStamp): # sensitive transaction
 
         if self.active: # edit prevent # avoid data ma
             if account_is_active:# withraw cash ! or else no cash!
-            
                 try:
                     if not self.withrawned and self.approved:# stop repeated withraws and withraw only id approved by ADMIN 
-                    
-                        charges_fee = self.charges_fee
+                        charges_fee = self.charges_fee # TODO settings
 
                         if ctotal_balanc >= ( self.amount + charges_fee):
                             try:                                
                                 new_bal = ctotal_balanc - self.amount - charges_fee
-                                # self.current_bal = new_bal
-                                Account.objects.filter(user_id=self.user_id).update(balance= new_bal)
+                                update_account_bal_of(self.user_id,new_bal) # F
                                 self.withrawned = True # transaction done
-
-                                # else:
-                                #     self.withrawned= False
-                                #     raise Exception #('insufficient funds in your account')
 
                                 try:
                                     if not self.has_record:
-                                        TransactionLog.objects.create(user_id =self.user_id,amount= self.amount ,trans_type = 'Withrawal')
+                                        log_record(self.user_id,self.amount,'Withrawal')
                                         self.has_record = True
                                         self.active = False
                                 except Exception as e:
@@ -267,9 +217,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
 
                             except Exception as e:
                                 print('ACCC',e)
-                        # else:
-                        #     return#
-                                
+         
                 except Exception as e:  
                     print('CashWithRawal:',e)
                     return  # incase of error /No withrawing should happen
@@ -278,3 +226,29 @@ class CashWithrawal(TimeStamp): # sensitive transaction
                     self.active =False
 
                 super().save(*args, **kwargs)
+
+# Helper functions
+
+def log_record(user_id,amount,trans_type):# F1
+    TransactionLog.objects.update_or_create(user_id =user_id,amount= amount ,trans_type = trans_type)
+
+def current_account_bal_of(user_id): #F2
+    try:
+        return float(Account.objects.get(user_id =user_id).balance)
+    except Exception as e:
+        return e
+
+def update_account_bal_of(user_id,new_bal): #F3
+    try:
+        if new_bal >= 0:
+            Account.objects.filter(user_id =user_id).update(balance= new_bal)
+        else:
+            log_record(user_id,0,'Account Error') # REMOVE
+    except Exception as e:
+        return e
+
+def refer_credit_create(credit_to_user,credit_from_username,amount):
+    try:
+        RefCredit.objects.update_or_create(user = credit_to_user,credit_from = credit_from_username, amount= amount)
+    except Exception as e:
+        print(f'RRR{e}')

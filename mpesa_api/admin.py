@@ -1,5 +1,5 @@
 from django.contrib import admin
-# from rangefilter.filter import DateRangeFilter
+from rangefilter.filter import DateRangeFilter
 from mpesa_api.models import (
     B2CRequest,
     B2CResponse,
@@ -25,7 +25,7 @@ class B2CRequestAdmin(admin.ModelAdmin):
         "date_added",
     )
     search_fields = ("phone",)
-    # list_filter = (("date_added", DateRangeFilter),)
+    list_filter = (("date_added", DateRangeFilter),)
 
 
 @admin.register(B2CResponse)
@@ -55,7 +55,7 @@ class B2CResponseAdmin(admin.ModelAdmin):
         "is_registered_customer",
     )
     search_fields = ("phone", "transaction_receipt", "mpesa_user_name")
-    # list_filter = (("transaction_date", DateRangeFilter),)
+    list_filter = (("transaction_date", DateRangeFilter),)
 
 
 @admin.register(C2BRequest)
@@ -83,10 +83,10 @@ class C2BRequestAdmin(admin.ModelAdmin):
         "date_added",
     )
     search_fields = ("phone", "transaction_id", "name")
-    # list_filter = (
-    #     ("transaction_date", DateRangeFilter),
-    #     ("date_added", DateRangeFilter),
-    # )
+    list_filter = (
+        ("transaction_date", DateRangeFilter),
+        ("date_added", DateRangeFilter),
+    )
 
 
 @admin.register(OnlineCheckout)
@@ -131,4 +131,16 @@ class OnlineCheckoutResponseAdmin(admin.ModelAdmin):
     # list_filter = (
     #     ("transaction_date", DateRangeFilter),
     #     ("date_added", DateRangeFilter),
+    # )
+
+    # readonly_fields = (
+    #     "phone",
+    #     "amount",
+    #     "transaction_date",
+    #     "mpesa_receipt_number",
+    #     "result_description",
+    #     "result_code",
+    #     "checkout_request_id",
+    #     "merchant_request_id",
+    #     "date_added",
     # )

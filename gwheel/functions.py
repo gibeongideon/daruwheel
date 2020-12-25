@@ -3,7 +3,6 @@ from time import sleep
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-
 def countD(n, str1="Market Active till {} count down is ZERO."):
     countDown = n
     while (countDown >= 0):
@@ -16,7 +15,6 @@ def countD(n, str1="Market Active till {} count down is ZERO."):
             countDown = countDown - 1
         else:
             break 
-
 
 def countC(n):
     countDown = n
@@ -32,7 +30,6 @@ def countC(n):
             countDown = countDown - 1
         else:
             break 
-
 
 def spin_manager():
     from gwheel.models import WheelSpin
@@ -52,7 +49,6 @@ def spin_manager():
     except Exception as e:
         print('CONTROL ERROR',e)
         return e
-
 
 
 ################ web Socket functions ##########

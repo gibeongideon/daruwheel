@@ -20,7 +20,7 @@ from rest_framework.authtoken import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-admin.site.site_header = 'Darucash Admin'
+admin.site.site_header = 'Daru Bet Admin'
 # admin.site.index_title = ''
 
 urlpatterns = [

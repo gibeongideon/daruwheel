@@ -12,7 +12,7 @@
   <div class="col-md-12">
     <div class="card ">
       <div class="card-header">
-        <h4 class="card-title"> All Transactions</h4>
+        <h4 class="card-title"> My Users Information</h4>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -20,34 +20,34 @@
             <thead class=" text-primary">
               <tr>
                 <th>
-                  Date
+                  Username
                 </th>
                 <th>
-                  Transaction Type
+                  Email
                 </th>
                 <th>
-                  Amount
+                  date_joint
                 </th>
                 <th class="text-center">
-                  Current balance
+                  Last_login
                 </th>
               </tr>
             </thead>
             <tbody>
-              {% for trans in trans_logz%}
+              {% for userr in mine_users%}
 
               <tr>
                 <td>
-                  {{trans.created_at}}
+                  {{userr.username}}
                 </td>
                 <td>
-                  {{trans.trans_type}}
+                  {{userr.email}}
                 </td>
                 <td>
-                  {{trans.amount}}
+                  {{userr.date_joined}}
                 </td>
                 <td class="text-center">
-                  {{trans.now_bal}}
+                  {{userr.last_login}}
                 </td>
               </tr>
 

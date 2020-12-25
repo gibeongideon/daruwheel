@@ -1,5 +1,6 @@
-# from core.models import BetSettingVar
+from .models import BetSettingVar
 
+# @property
 # def set_up():
 #     try:
 #         return BetSettingVar.objects.get(id =1)# Set up variables
@@ -7,3 +8,5 @@
 #         BetSettingVar.objects.update_or_create(id =1)
 #         return BetSettingVar.objects.get(id =1)
     
+
+set_up = BetSettingVar.objects.get(id =1)

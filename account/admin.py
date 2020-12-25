@@ -28,11 +28,11 @@ admin.site.register(TransactionLog, TransactionLogAdmin)
 
 
 class CashDepositAdmin(admin.ModelAdmin):
-    list_display = ('user','source_no','deposited','has_record','amount','current_bal','created_at','updated_at')
+    list_display = ('user','deposited','has_record','amount','current_bal','created_at','updated_at')
     list_display_links = ('amount',)
     search_fields = ('amount',)
     list_filter =('user',)
-    # readonly_fields = ('user_depo','source_no','deposited','has_record','amount','current_bal','created_at','updated_at')
+    # readonly_fields = ('user','deposited','has_record','amount','current_bal','created_at','updated_at')
 
 
 admin.site.register(CashDeposit, CashDepositAdmin)

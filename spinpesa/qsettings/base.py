@@ -45,20 +45,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'channels',# resolve  apps which need run server commands# move to top
-    'mpesa',
-    # 'mpesa_api.core',
-    # 'mpesa_api.util',
     'core',
     'account',
     'gwheel',
     # 'django_celery_results',
     # 'django_celery_beat'#no
     'spinchannel',
-    'chat',
-    'mpesa_api'
-    
-    
-      
+    'mpesa_api',
+    'cash_trans',
 ]
 
 MIDDLEWARE = [
@@ -189,9 +183,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static'))
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
-MEDIA_UPLOAD_FOLDER = '%Y_%m_%d/'
+# MEDIA_UPLOAD_FOLDER = '%Y_%m_%d/'
+# TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")  # ROOT dir for templates
 
 
 JET_SIDE_MENU_COMPACT = True
@@ -214,7 +209,11 @@ CELERY_BEAT_SCHEDULE = {
     'create_spin_wheel_market': { 
          'task': 'gwheel.tasks.create_spinwheel', 
          'schedule': crontab(minute= [0,5,10,15,20,25,30,35,40,45,50,55]),
-        },          
+        },
+    'run_count_down_timer': {
+         'task': 'gwheel.tasks.start_count_down', 
+         'schedule': crontab(minute= [0,5,10,15,20,25,30,35,40,45,50,55]),
+        }          
 }
 
 
@@ -226,8 +225,6 @@ CHANNEL_LAYERS = {
         },
     }
 }
-
-
 
 
 
@@ -290,4 +287,4 @@ C2B_ONLINE_SHORT_CODE = config('C2B_ONLINE_SHORT_CODE', default='')
 C2B_ONLINE_PARTY_B = config('C2B_ONLINE_PARTY_B', default='')
 # number of seconds from the expiry we consider the token expired the token expires after an hour
 # so if the token is 600 sec (10 minutes) to expiry we consider the token expired.
-TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600, cast=int)
+# TOKEN_THRESHOLD = config('TOKEN_THRESHOLD', default=600, cast=int) ## invalid literal for int() with base 10: "config('TOKEN_THRESHOLD')"

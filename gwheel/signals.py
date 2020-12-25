@@ -34,12 +34,12 @@ def on_results_save(sender,instance, **kwargs):
             }
         )
     except Exception as ce:
-        print(f'Channel error:{ce}')
-        pass
+        print(f'Channel error:{ce}') # debug
+        pass # issues with channel shouldn't inter normal business from being done
 
     try:
         Result.objects.update_or_create(market_id = instance.market_id,cumgain_id =1 )
 
     except Exception as re:
-        print(f'REESignal error:{re}')
-        pass
+        print(f'REESignal error:{re}') # debug
+        pass # results later/manual by admin incase 

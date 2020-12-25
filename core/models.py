@@ -19,12 +19,13 @@ class TimeStamp(models.Model):
 class BetSettingVar(TimeStamp):
     per_retun = models.FloatField(default = 0,blank =True,null= True)
     min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
+    refer_per = models.FloatField(default = 1000,blank =True,null= True)
     closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
     results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
     wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
 
 
-set_upp = (BetSettingVar.objects.get(id =1))
+# set_upp = (BetSettingVar.objects.get(id =1))
 
 class Market(models.Model):
     '''Market place '''

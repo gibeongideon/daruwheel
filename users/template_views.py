@@ -76,3 +76,9 @@ def notification(request):
     return render(request, 'users/notification.html',context)
     
 
+
+def mine_users(request):
+    mine_users =list(User.objects.filter(last_name =request.user.first_name))
+    print(f'Mine USERS{mine_users}')
+    
+    return render(request, 'users/mine_users.html',{'mine_users': mine_users})
