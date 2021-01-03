@@ -1,14 +1,14 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from .models import User
 
 class LoginForm(forms.Form):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "placeholder" : "Username",                
-                # "value"       : "test",
                 "class"       : "form-control"
             }
         ))
@@ -16,7 +16,6 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder" : "Password",
-                # "value"       : "ApS12_ZZs8",
                 "class"       : "form-control"
             }
         ))
@@ -36,14 +35,27 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control"
             }
         ))
-
-    last_name = forms.CharField(
+    phone_number = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                "placeholder" : "Refer Code",                
+                "placeholder" : "Phone_number",                
                 "class": "form-control"
             }
         ))
+    daru_code = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder" : "daru_code",                
+                "class": "form-control"
+            }
+        ))
+    # last_name = forms.CharField(
+    #     widget=forms.TextInput(
+    #         attrs={
+    #             "placeholder" : "Refer Code",                
+    #             "class": "form-control"
+    #         }
+    #     ))
 
     password1 = forms.CharField(
         widget=forms.PasswordInput(

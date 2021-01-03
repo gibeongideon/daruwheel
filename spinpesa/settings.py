@@ -44,15 +44,15 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework.authtoken',
-    'channels',# resolve  apps which need run server commands# move to top
-    'core',
-    'account',
-    'gwheel',
+    # 'channels',# resolve  apps which need run server commands# move to top
+    # 'core',
+    # 'account',
+    # 'gwheel',
     # 'django_celery_results',
     # 'django_celery_beat'#no
-    'spinchannel',
-    'mpesa_api',
-    'cash_trans',
+    # 'spinchannel',
+    # 'mpesa_api',
+    # 'cash_trans',
 ]
 
 MIDDLEWARE = [
@@ -175,6 +175,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+
+# Set custom user model
+AUTH_USER_MODEL = 'users.User'
 
 
 

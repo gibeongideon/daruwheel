@@ -20,18 +20,18 @@ from rest_framework.authtoken import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-admin.site.site_header = 'Daru Bet Admin'
+admin.site.site_header = 'SystemX Admin'
 # admin.site.index_title = ''
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls',namespace='core')),
     path('users/', include('users.urls',namespace='users')),
-    path('account/', include('account.urls',namespace='accounts')),
-    path('gwheel/', include('gwheel.urls',namespace='gwheels')),
-    path('spin/', include('spinchannel.urls',namespace='spinchannel')),
-    path('cash_trans/', include('cash_trans.urls',namespace='cash_trans')),
-    path('mpesa/', include('mpesa_api.urls', 'mpesa')),
+    # path('account/', include('account.urls',namespace='accounts')),
+    # path('gwheel/', include('gwheel.urls',namespace='gwheels')),
+    # path('spin/', include('spinchannel.urls',namespace='spinchannel')),
+    # path('cash_trans/', include('cash_trans.urls',namespace='cash_trans')),
+    # path('mpesa/', include('mpesa_api.urls', 'mpesa')),
     path('api-token-auth/', views.obtain_auth_token, name='api-token-auth'),
     # path("", include("core.urls"))  # add this
     

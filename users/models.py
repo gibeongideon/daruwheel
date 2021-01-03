@@ -1,27 +1,82 @@
-# reset User Passord
+"""Models and methods for all casino functionality."""
+# from autobahn_sync import publish
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+# from django.conf import settings
+# from django.utils import timezone
+# from threading import Lock
+# from website.exceptions import LockException, NegativeTokens, NotEnoughTokens
+
+# import json
+# import logging
+# import math
+# import secrets
+# from decimal import Decimal
+
+# logger = logging.getLogger(__name__)
+# mutex = Lock()
+
+
+class User(AbstractUser):
+    """Add two fields to existing Django User model.
+      : daru_code for reference
+      : phone number field
+      :
+    """
+    my_code = models.CharField(max_length=150,blank=True,null=True)
+    daru_code = models.CharField(max_length=150,help_text='Enter DADMIN if you dont have Code',blank=True,null=True)
+    phone_number = models.CharField(max_length=150,unique= True, null= True,blank= True)
+
+    def __str__(self):
+        """Simply present username"""
+        return self.username
+
+    class Meta:
+        unique_together = (['username', 'phone_number','email'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # reset User Passord
+# from django.db import models
+# from django.contrib.auth.models import User
 from django.conf import settings
 
 
-import unicodedata
+# import unicodedata
 
-# from django import forms
-from django.contrib.auth import (
-    authenticate, get_user_model, password_validation,
-)
-# from django.contrib.auth.hashers import (
-#     UNUSABLE_PASSWORD_PREFIX, identify_hasher,
+# # from django import forms
+# from django.contrib.auth import (
+#     authenticate, get_user_model, password_validation,
 # )
-# from django.contrib.auth.models import User
-# from django.contrib.auth.tokens import default_token_generator
-# from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import ValidationError
-# from django.core.mail import EmailMultiAlternatives
-# from django.template import loader
-# from django.utils.encoding import force_bytes
-# from django.utils.http import urlsafe_base64_encode
-# from django.utils.text import capfirst
+# # from django.contrib.auth.hashers import (
+# #     UNUSABLE_PASSWORD_PREFIX, identify_hasher,
+# # )
+# # from django.contrib.auth.models import User
+# # from django.contrib.auth.tokens import default_token_generator
+# # from django.contrib.sites.shortcuts import get_current_site
+# from django.core.exceptions import ValidationError
+# # from django.core.mail import EmailMultiAlternatives
+# # from django.template import loader
+# # from django.utils.encoding import force_bytes
+# # from django.utils.http import urlsafe_base64_encode
+# # from django.utils.text import capfirst
 from django.utils.translation import gettext, gettext_lazy as _
 
 class SetPasswordModel(models.Model):
@@ -30,7 +85,7 @@ class SetPasswordModel(models.Model):
         'password_mismatch': _('The two password fields didn’t match.'),
     }
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='users_pass_reset',blank =True,null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='users_pass_reset',blank =True,null=True)
     new_password1 = models.CharField(
         max_length =250,
         #l#abel=_("New password"),
