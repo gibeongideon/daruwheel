@@ -116,17 +116,17 @@ class OnlineCheckoutResponseAdmin(admin.ModelAdmin):
         "mpesa_receipt_number",
         "transaction_date",
     )
-    readonly_fields = (
-        "phone",
-        "amount",
-        "transaction_date",
-        "mpesa_receipt_number",
-        "result_description",
-        "result_code",
-        "checkout_request_id",
-        "merchant_request_id",
-        "date_added",
-    )
+    # readonly_fields = (
+    #     "phone",
+    #     "amount",
+    #     "transaction_date",
+    #     "mpesa_receipt_number",
+    #     "result_description",
+    #     "result_code",
+    #     "checkout_request_id",
+    #     "merchant_request_id",
+    #     "date_added",
+    # )
     search_fields = ("phone", "amount", "date_added", "mpesa_receipt_number")
     # list_filter = (
     #     ("transaction_date", DateRangeFilter),

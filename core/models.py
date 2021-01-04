@@ -61,7 +61,7 @@ class Market(models.Model):
 
 
 class MarketType(TimeStamp):
-    name = models.CharField(max_length=100, blank =True,null=True)
+    name = models.CharField(max_length=100,default='M', blank =True,null=True)
 
     def __str__(self):
         return '{0}:{1}'.format(self.id,self.name)

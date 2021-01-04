@@ -1,5 +1,5 @@
 from django.contrib import admin
-from gwheel.models import Stake,WheelSpin,CumulativeGain,Result,Selection,MarketType,OutCome
+from gwheel.models import  Stake,WheelSpin,CumulativeGain,Result,Selection,MarketType,OutCome
 
 class WheelSpinAdmin(admin.ModelAdmin):
 

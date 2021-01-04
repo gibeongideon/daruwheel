@@ -1,0 +1,14 @@
+{% extends 'website/layout.html' %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-md-3"></div>
+  	<div class="col-md-6">
+  		<div class='text-danger alert alert-danger'>
+			Wystąpił błąd: {{ error_message }}
+		</div>
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'website/layout.html' %}
+
+{% block additional_javascript %}
+
+<script>
+    vue_latest_draws = {{ latest_draws_json|safe }};
+    vue_current_bets = {{ current_bets_json|safe }};
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+	    <div id="roulette"></div>
+    </div>
+</div>
+
+<div>
+    <h2>Latest numbers</h2>
+    <div id="draw_history">
+        <div v-for="number in latest_draws" class="roulette-number" v-bind:class="{
+            'number-green': roulette_number_is_green(number),
+            'number-black': roulette_number_is_black(number),
+            'number-red': roulette_number_is_red(number),
+        }">
+            [[ number ]]
+        </div>
+    </div>
+</div>
+
+<div>
+    <hr>
+</div>
+
+<div>
+    <div>
+		{% if user.is_authenticated %}
+    		<h1 id="bet_welcome">Bet color {{ user.username }}!</h1>
+		{% else %}
+    		<h1 id="bet_welcome" class="text-center">Log in to bet!</h1>
+		{% endif %}
+	</div>
+    <div class="row">
+        <div class="col-md-3">
+            <button id="bet_red" v-on:click="bet('red')" class="btn btn-danger btn-block">
+                <i class="fa fa-sign-in"></i>BET x2
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button id="bet_green" v-on:click="bet('green')" class="btn btn-success btn-block">
+                <i class="fa fa-sign-in"></i>BET x36
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button id="bet_black" v-on:click="bet('black')" class="btn btn-block btn-black">
+                <i class="fa fa-sign-in"></i>BET x2
+            </button>
+        </div>
+        <div class="col-md-3">
+            {% if user.is_authenticated %}
+            <select id="rates" name="rates" v-model.number="bet_amount" class="custom-select">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="100">100</option>
+            </select>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <ul v-for="bet in current_bets.red" id="red_bet_annotation" class="list-group">
+                <li class="list-group-item text-light red-annotation-background">
+                    <span class="lead text-white">[[ bet.user_id__username ]]:</span>
+                    [[ bet.amount ]]
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <ul v-for="bet in current_bets.green" id="green_bet_annotation" class="list-group">
+                <li class="list-group-item text-light green-annotation-background">
+                    <span class="lead text-white">[[ bet.user_id__username ]]:</span>
+                    [[ bet.amount ]]
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <ul v-for="bet in current_bets.black" id="black_bet_annotation" class="list-group">
+                <li class="list-group-item text-light black-annotation-background">
+                    <span class="lead text-white">[[ bet.user_id__username ]]:</span>
+                    [[ bet.amount ]]
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

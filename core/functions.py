@@ -9,4 +9,4 @@ from .models import BetSettingVar
 #         return BetSettingVar.objects.get(id =1)
     
 
-set_up = BetSettingVar.objects.get(id =1)
+set_up,_ = BetSettingVar.objects.get_or_create(id =1) #get_or_create return a tuple/ (<BetSettingVar: BetSettingVar object (2)>, True)

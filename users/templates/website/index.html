@@ -1,0 +1,27 @@
+{% extends 'website/layout.html' %}
+
+{% block content %}
+
+<div class='row'>
+  <div class='col-md-2'></div>
+  <div class='col-md-8'>
+      
+      {% if user.is_authenticated %}
+    	<h1 class="text-center">Hello {{ user.username }}</h1><hr>
+    	<p class='text-info alert alert-info'>
+    	  Please navigate to deposit if your token count no longer allows you to bet.
+		  Don't forget to share our site, part of first deposit from every new user, who will be recomended by you, will credit also your account!
+    	</p>
+	  {% else %}
+    	<h1 class="text-center">Hello guest!</h1><hr>
+    	<p class='text-info alert alert-info'>
+    	  Please create account or login to play roulette, deposit or withdraw money. 
+		  Don't forget to select a friend who recommended you our site during your registration!
+    	</p>
+	  {% endif %}
+
+  </div>
+</div>
+
+
+{% endblock %}
