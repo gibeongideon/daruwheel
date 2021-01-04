@@ -1,9 +1,18 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from core.models import TimeStamp,BetSettingVar
+from django.conf import settings
+from .exceptions import NegativeTokens, NotEnoughTokens # LockException,
+from decimal import Decimal
+import math
+from core.models import set_up
+from django.core.validators import MinValueValidator
 # from .functions import log_record ##NO circular import
+
 class Account(TimeStamp):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_accounts',blank =True,null=True)
+    token_count = models.IntegerField(default=0)
+
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     actual_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -15,8 +24,126 @@ class Account(TimeStamp):
     class Meta:
         db_table = "d_accounts"
         ordering = ('-user_id',)
+
+    def add_tokens(self, number):
+        """Increase user tokens amount watch over not to use negative value.
+
+        self -- user whose token_count field  gonna be increased
+        number -- tokens amount, must be integer
+
+        In case negative number no changes happened.
+        """
+        int_num = int(number)
+        if int_num > 0:
+            self.token_count += int_num
+            
+    def decrease_tokens(self, number):
+        """Decrease user tokens amount watch over not to set negative value.
+
+        Keyword arguments:
+        self -- user whose token_count field is to be decreased
+        number -- tokens amount, must be integer, cannot be greater
+                than token_count
+
+        In case number is greater than user token_count NegativeTokens
+        exception raised, otherwise simply decrease token_count with number.
+        """
+        int_num = int(number)
+        if self.token_count - int_num >= 0:
+            self.token_count -= int_num
+        else:
+            raise NegativeTokens()
+
+class Curr_Variable(TimeStamp):
+    """Store currencies with specified name and rate to token amount."""
+
+    name = models.CharField(max_length=30,blank =True,null=True)
+    curr_unit = models.DecimalField(max_digits=12, decimal_places=5,default= 1)
+
+    def __str__(self):
+        """Simply present currency name and it's curr_unit."""
+        return str(self.curr_unit)
+
+    # @classmethod
+    # def update_curr_unit(cls,value):
+    #     try:
+    #         cls.objects.get(id=1).update(curr_unit= value)
+    #     except Exception as e :
+    #         print(f'update_curr_unit{e}')
+            
+
+class Currency(TimeStamp):
+    """Store currencies with specified name and rate to token amount."""
+    common_var = models.ForeignKey(Curr_Variable, on_delete=models.CASCADE,related_name='curr_vars',blank =True,null=True)
+
+    name = models.CharField(max_length=30)
+    rate = models.DecimalField(max_digits=6,decimal_places=5,blank=True,null= True)
+    amount_equip_to_one_ksh =models.FloatField(blank=True,null= True)
+    # curr_unit = models.DecimalField(help_text= 'set up variable', max_digits=6, decimal_places=2,default=0,blank=True,null= True)
+
+    def __str__(self):
+        """Simply present currency name and it's rate."""
+        return self.name + " - " + str(self.rate)
+
+    @classmethod
+    def get_tokens_amount(cls, currency_name, value):
+        """Convert value in specified currency to tokens.
+
+        Keyword arguments:
+        cls -- enable connect to Currency model,
+        currency_name -- allow to get specified currency,
+        value -- float value represents amount of real money,
+
+        Could raise Currency.DoesNotExist exception.
+        Token value is rounded down after value multiplication by rate.
+        """
+        curr = cls.objects.get(name=currency_name)
+        tokens = value * float(curr.rate)
+        tokens_floor = math.floor(tokens)
+        return tokens_floor
+
+    @classmethod
+    def get_withdraw_amount(cls, currency_name, tokens):
+        """Convert tokens to amount of money in specified currency.
+
+        Keyword arguments:
+        cls -- enable connect to Currency model,
+        currency_name -- allow to get specified currency,
+        tokens -- integer value represents number of tokens,
+
+        Could raise Currency.DoesNotExist exception and NegativeTokens
+        exception.
+        Returned object is casted to Decimal with two places precision.
+        """
+        curr = cls.objects.get(name=currency_name)
+        if tokens < 0:
+            raise NegativeTokens()
+
+        value = Decimal(round(tokens / float(curr.rate), 2))
+        return value
+
+    # @classmethod
+    # def update_curr_unit(cls,value):
+    #     try:
+    #         cls.objects.update(curr_unit= value)
+    #     except Exception as e :
+    #         print(f'update_curr_unit{e}')
+            
+    @property
+    def to_token_rate(self):
+        print('Check')
+        print(set_up['curr_unit'])
+        try:
+            return 1/(float(self.amount_equip_to_one_ksh) * float(self.common_var.curr_unit))
+        except Exception as e:
+            return e
+    class Meta:
+        db_table = "d_currency"
+        
+
+
 class RefCredit(TimeStamp):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='ref_accountcredit_users',blank =True,null=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     current_bal =  models.DecimalField(max_digits=12, decimal_places=2,blank =True,null=True)
     credit_from = models.CharField(max_length=200 ,blank =True,null=True)
@@ -84,7 +211,7 @@ class RefCredit(TimeStamp):
         super().save(*args, **kwargs)
 
 class TransactionLog(TimeStamp):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_balances',blank =True,null=True) # NOT CASCADE #CK
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_transactions_logs',blank =True,null=True) # NOT CASCADE #CK
     amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
     now_bal = models.DecimalField(('now_bal'), max_digits=12, decimal_places=2, default=0)
     trans_type = models.CharField(max_length=100 ,blank =True,null=True)
@@ -112,21 +239,39 @@ class TransactionLog(TimeStamp):
         super().save(*args, **kwargs)
 
 class CashDeposit(TimeStamp):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_deposits',blank =True,null=True)
-    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    """Represent single money deposit made by user using 'shop'.
+    Define fields to store amount of money, using Decimal field with
+    two places precision and maximal six digits, time of deposit creation,
+    and connect every deposit with user and used currency.
+    """
+    # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    amount = models.DecimalField(max_digits=6, decimal_places=2)
     deposited = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
 
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='user_deposits',blank =True,null=True)
+
+    currency_id = models.ForeignKey(
+        Currency,
+        on_delete=models.CASCADE,
+        blank =True,null=True
+    )
+
+    def __str__(self):
+        """Simply present name of user connected with deposit and amount."""
+        return self.user.username + " made " + str(self.amount) + " deposit"
+
     class Meta:
         db_table = "d_deposits"
-    
-    def __str__(self):
-        return str(self.amount)
     
     @property
     def current_bal(self): 
         return current_account_bal_of(self.user_id)
             
+
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
         # if self.pk:
@@ -134,7 +279,7 @@ class CashDeposit(TimeStamp):
 
             if not self.deposited:
                 ctotal_balanc = current_account_bal_of(self.user_id) #F
-                new_bal = ctotal_balanc + self.amount
+                new_bal = ctotal_balanc + int(self.amount)
                 update_account_bal_of(self.user_id,new_bal) #F
                 self.deposited = True
 
@@ -151,26 +296,44 @@ class CashDeposit(TimeStamp):
 
         super().save(*args, **kwargs)
 
+
 class CashWithrawal(TimeStamp): # sensitive transaction
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_withrawals',blank =True,null=True)
-    amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0) 
+    """Represent user's money withdrawal instance.
+    Define fields to store amount of money, using Decimal field with
+    two places precision and maximal six digits, time when withdraw is
+    signaled and connect every withdraw with user and used currency.
+    """
+    # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
+    amount = models.DecimalField(max_digits=6, decimal_places=2)
+    address = models.CharField(max_length=100)
+    
     approved = models.BooleanField(default=False,blank= True,null =True)
     withrawned = models.BooleanField(blank= True,null =True)
     has_record = models.BooleanField(blank= True,null =True)
     active = models.BooleanField(default =True,blank= True,null =True)
 
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='user_withrawals',blank =True,null=True
+        )    
+    currency_id = models.ForeignKey(
+        Currency,
+        on_delete=models.CASCADE,
+        )
+
+
+    def __str__(self):
+        """Simply present name of user connected with withdraw and amount."""
+        return self.user.username + " want to withdraw " + str(self.amount)
+
     class Meta:
         db_table = "d_withrawals"
 
-    def __str__(self):
-        return str(self.amount)
-
     @property
     def user_account(self):
-        try:
-            return Account.objects.get(user_id =self.user_id)
-        except :
-            return 'querying..' 
+        return current_account_bal_of(self.user)# Account.objects.get(user_id =self.user_id)
+ 
 
     @property # TODO no hrd coding
     def charges_fee(self):

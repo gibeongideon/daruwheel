@@ -14,4 +14,5 @@ def start_count_down():
     ''' precise spin timer task'''
     sleep(16) # spin time then 
     countC(280) # kick up the timer   # 277 + 16 = 296 seconds = 4.8 minutes
-    
+
+ 

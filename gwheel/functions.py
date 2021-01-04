@@ -38,6 +38,10 @@ def spin_manager():
 
     try:
         id = max([obj.id for obj in WheelSpin.objects.all()])
+    except:
+        WheelSpin.objects.update_or_create(id=1) #happens once DB creation
+
+    try:
         try:
             OutCome.objects.create(market_id = id)  #  process result of last ma
         except Exception as e:

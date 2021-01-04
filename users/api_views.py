@@ -1,7 +1,5 @@
 from rest_framework import viewsets
-from .models import SetPasswordModel
-
-from .serializers import UserSerializer#,SetPasswordSerializer
+from .serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -50,23 +48,3 @@ class UserRecordView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-
-
-# class SetPasswordViewSet(viewsets.ModelViewSet):
-#     queryset = SetPasswordModel.objects.all()
-#     serializer_class = SetPasswordSerializer
-
-# class UserIDView(APIView):
-#     """
-#     API View to get a a user details like id by passing username
-#     # implement url /user_detail=<user_name>
-#     """
-#     def get(self,request,user_name,format=None):
-#         try:
-#             user_id =User.objects.get(username= str(user_name)).id
-#             user_info ={'user_id':user_id,'username':user_name,}
-#             return Response(user_info)
-
-#         except :# Exception as e:
-#             # return Response({'error':e.args})
-#             raise Http404

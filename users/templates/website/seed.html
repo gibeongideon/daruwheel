@@ -1,0 +1,35 @@
+{% extends 'website/layout.html' %}
+
+{% block content %}
+
+<h2 class="sub-header">Server seeds</h2>
+<div class="table-responsive">
+    <table class="table table-striped" id="seed-table">
+        <thead>
+            <tr>
+                <th>Round</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Seed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seed in seed_list %}
+            <tr>
+                <td>1</td>
+                <td>24.03.2018 00:00</td>
+                <td>24.03.2018 00:01</td>
+                <td>
+                    {% if seed.visible %}
+                        {{ seed.seed }}
+                    {% else %}
+                        Hidden
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

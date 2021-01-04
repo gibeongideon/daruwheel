@@ -1,5 +1,5 @@
 from django.contrib import admin
-from account.models import Account,RefCredit,TransactionLog,CashDeposit,CashWithrawal
+from account.models import Account,Currency,RefCredit,TransactionLog,CashDeposit,CashWithrawal,Curr_Variable
 
 class AccountAdmin(admin.ModelAdmin):
     list_display = ('id','user_id','user','balance','actual_balance','refer_balance','trial_balance', 'active','created_at','updated_at')
@@ -8,6 +8,20 @@ class AccountAdmin(admin.ModelAdmin):
     list_editable = ('active',)
 
 admin.site.register(Account, AccountAdmin)
+
+class Curr_VariableAdmin(admin.ModelAdmin):
+    list_display = ('id','name','curr_unit',)
+    list_display_links = ('id',)
+    search_fields = ('id',)
+admin.site.register(Curr_Variable,Curr_VariableAdmin)
+class CurrencyAdmin(admin.ModelAdmin):
+    list_display = ('id','common_var','name','rate','amount_equip_to_one_ksh','to_token_rate','created_at','updated_at')
+    # list_display_links = ('',)
+    search_fields = ('name',)
+    list_editable = ('name','rate','amount_equip_to_one_ksh')
+    # readonly_fields =()
+
+admin.site.register(Currency,CurrencyAdmin)
 
 class RefCreditAdmin(admin.ModelAdmin):
     list_display = ('user_id','user','amount','credit_from','current_bal','approved','closed', 'has_record','created_at','updated_at')

@@ -1,17 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db.models import Sum
 from datetime import timedelta,datetime
 from random import randint
 from django.utils import timezone
 from core.models import TimeStamp,Market,MarketType,Selection ,BetSettingVar
 from account.models import RefCredit
-from core.functions import set_up
+from core.models import set_up
 from account.models import update_account_bal_of,current_account_bal_of ,log_record,refer_credit_create
+# from django.contrib.auth.models import User
+# from users.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model() #make apps independent
 
 class WheelSpin(Market): 
     market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
     # per_relief = models.FloatField(blank =True,null= True)
+    per_retun = models.FloatField(default = 0,blank =True,null= True)
     class Meta:
         db_table = "d_wheel_markets"
 
@@ -35,7 +40,6 @@ class WheelSpin(Market):
             total_amount = Stake.objects.filter(market_id = self.id ).filter(marketselection_id = 1).aggregate(bet_amount =Sum('amount'))
             if total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
- 
             return  0
             
         except Exception as e:
@@ -82,7 +86,8 @@ class WheelSpin(Market):
 
     @property
     def gain_after_relief(self):
-        per_to_return = set_up.per_retun
+        print(f'setUP{set_up}')
+        per_to_return = self.per_retun
         return ((100 - per_to_return)/100)*float(self.offset)
 
     def save(self, *args, **kwargs):
@@ -93,14 +98,14 @@ class WheelSpin(Market):
         if self.active and not self.place_stake_is_active:
             self.active = False
         try:
-            self.market = MarketType.objects.get( id= int(set_up.wheelspin_id) )
+            self.market,_ = MarketType.objects.get_or_create( id= int(set_up.wheelspin_id) ) #get_or_create return a tuple/
         except:
-            self.market = MarketType.objects.get( id= 1)
+            self.market,_ = MarketType.objects.get_or_create( id= 1)
             
         super().save(*args, **kwargs) 
 
 class Stake (TimeStamp):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_wp_stakes',blank =True,null=True)
     market = models.ForeignKey(WheelSpin, on_delete=models.CASCADE,related_name='wheelspins',blank =True,null=True)
     marketselection = models.ForeignKey(Selection, on_delete=models.CASCADE,related_name='marketselections')
     current_bal = models.FloatField(max_length=10,default=0 )#R
@@ -110,6 +115,11 @@ class Stake (TimeStamp):
 
     def __str__(self):
         return 'Stake:{0} for:{1}'.format(self.amount,self.user)  
+        
+        
+    @classmethod
+    def per_market_bets(cls,market_id):
+        return cls.objects.filter(market_id = market_id)
 
     @property
     def place_bet_is_active(self):
@@ -279,17 +289,18 @@ class Result(TimeStamp):
         except Exception as e:
             return 0
 
-    def update_reference_account(self,user_id,ref_credit,trans_type):
+    @staticmethod
+    def update_reference_account(user_id,ref_credit,trans_type):
         print(user_id,ref_credit,trans_type)
 
         try:
             this_user = User.objects.get(id = user_id)
          
-            this_user_ReferCode = this_user.last_name # first name is used as referer code
+            this_user_ReferCode = this_user.daru_code # first name is used as referer code
             if not this_user_ReferCode:
-                this_user_ReferCode = 'Dadmin'  # settings
+                this_user_ReferCode = 'DADMIN'  # settings
             
-            referer_users = User.objects.filter(first_name = this_user_ReferCode)
+            referer_users = User.objects.filter(my_code = this_user_ReferCode)
             for referer in referer_users:
                 print(referer,'RefererUser')
 
@@ -299,7 +310,8 @@ class Result(TimeStamp):
         except Exception as e:
             print('update_reference_account ERROR',e)
 
-    def update_acc_n_bal_record(self,user_id,new_bal,rem_credit,trans_type):
+    @staticmethod
+    def update_acc_n_bal_record(user_id,new_bal,rem_credit,trans_type):
         try: 
             update_account_bal_of(user_id,new_bal) #F3       
             log_record(user_id,rem_credit,trans_type) #F1
@@ -343,7 +355,7 @@ class Result(TimeStamp):
             elif self.resu ==1:
                 all_lose_stake = float(self.market.white_bet_amount)
 
-            per_to_return = float(set_up.per_retun) # 
+            per_to_return = float(self.market.per_retun) # 
             relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
 
             new_bal = user_current_account_bal + relief_amount
@@ -372,7 +384,7 @@ class Result(TimeStamp):
        
     def update_db_records(self):
         try:
-            set_per_return = set_up.per_retun
+            set_per_return = self.market.per_retun
             self.return_per =set_per_return
             self.gain = self.market.gain_after_relief
             WheelSpin.objects.filter(id = self.market_id).update(receive_results =True) # self.market.update(closed=True) or self.market.closed=True DOESN'T WORK
@@ -389,7 +401,7 @@ class Result(TimeStamp):
         if  self.resu and not self.closed:
             self.update_db_records()
             self.account_update()
-            # self.market.receive_results =True
+
             super().save(*args, **kwargs) #save only if 
 
         else:

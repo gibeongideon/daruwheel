@@ -1,0 +1,71 @@
+{% extends 'website/layout.html' %}
+
+{% block content %}
+
+{{ tokens_amount }}
+
+<form ref="withdraw_form" class="form-horizontal" role="form" action="{% url 'withdraw' %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+        <h1 class="text-center">Withdraw</h1>
+        <hr>
+        
+        {% if message %}
+            <div class='text-info alert alert-info'>System zarejestrował wypłatę, jeżeli pieniądze nie zostaną przelane w ciągu najbliższych 31 dni roboczych skontaktuj się z administratorem!</div>
+        {% endif %}
+
+        {% if nocurrency %}
+            <div class='text-danger alert alert-danger'>Currency does not exist!</div>
+        {% endif %}
+
+        {% if negative %}
+            <div class='text-danger alert alert-danger'>Posiadasz zbyt mało tokenów!</div>
+        {% endif %}
+
+        {% if data %}
+            <div class='text-danger alert alert-danger'>Wrong data! {{data}}</div>
+        {% endif %}
+
+        {% if logout %}
+            <div class='text-danger alert alert-danger'>Tylko zalogowany użytkownik może dokonać wypłaty!</div>
+        {% endif %}
+        
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-3 pt-2">
+            <input id="withdraw-amount" name="withdraw-amount" class="form-control" type="number" min="1" step="1" placeholder="Tokens amount..." list="defaultAmounts"/>
+            <datalist id="defaultTokens">
+                <option value="10">
+                <option value="25">
+                <option value="50">
+                <option value="100">
+                <option value="1000">
+            </datalist>
+        </div>
+        <div class="col-md-3 pt-2">
+            <select id="withdraw-currency" name="withdraw-currency" class="custom-select mb-2 mr-sm-2 mb-sm-0">
+            {% for element in currencies %}
+                <option value="{{ element.name }}">1000 tokens ~ {% widthratio 1000 element.rate 1 %} {{ element.name }}</option>
+            {% endfor %}
+        </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 pt-2">
+            <input type="text" id="address" name="address" class="form-control" placeholder="Address...">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 pt-2">
+            <button type="submit" class="btn btn-block btn-primary">Withdraw money!</button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
