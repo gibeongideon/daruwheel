@@ -16,16 +16,18 @@ class TimeStamp(models.Model):
         abstract = True
 
 
+
 class BetSettingVar(TimeStamp):
     per_retun = models.FloatField(default = 0,blank =True,null= True)
     min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
-    refer_per = models.FloatField(default = 1000,blank =True,null= True)
+    refer_per = models.FloatField(default = 0,blank =True,null= True)
     closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
     results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
     wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
+    ksh_unit = models.DecimalField(max_digits=6, decimal_places=2,blank=True,null= True)
+    
 
 
-# set_upp = (BetSettingVar.objects.get(id =1))
 
 class Market(models.Model):
     '''Market place '''
@@ -98,3 +100,46 @@ class Subselection(TimeStamp):
 
     def market_id(self):
         return self.selection
+
+
+
+# def variables_settings():
+#     # try:
+#     BetSettingVar.objects.get_or_create(id=1)
+#     sett = BetSettingVar.objects.update(id=1)
+#     print(sett)
+
+#     return sett
+
+    # except:
+    #     pass
+
+# set_up = variables_settings()
+
+
+set_up ={'return_val':0,'min_redeem_refer_credit':1000,'refer_per':0,'closed_at':4.7,'results_at':4.8,'wheelspin_id':1,'curr_unit':10}
+
+from account.models import Currency
+class SettingsVar(TimeStamp):
+    per_retun = models.FloatField(default = 0,blank =True,null= True)
+    # min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
+    # refer_per = models.FloatField(default = 0,blank =True,null= True)
+    # closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
+    # results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
+    # wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
+    curr_unit= models.DecimalField(max_digits=6, decimal_places=2,blank=True,null= True)
+    
+    def save(self, *args, **kwargs):
+       
+        try:
+            Curr_Variable.update_curr_unit(self.curr_unit)
+            # set_up['curr_unit'] = self.curr_unit
+        except:
+            pass
+        
+        # try:
+        #     WheelSpin.objects.filter(user_id =user_id).update(curr_unit= self.curr_unit)
+        # except:
+        #     pass
+            
+        super().save(*args, **kwargs)

@@ -41,7 +41,6 @@ def spin_manager():
     except:
         WheelSpin.objects.update_or_create(id=1) #happens once DB creation
 
-
     try:
         try:
             OutCome.objects.create(market_id = id)  #  process result of last ma

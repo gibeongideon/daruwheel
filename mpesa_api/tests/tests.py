@@ -126,7 +126,7 @@ class B2CMethodsTest(TestCase):
             dispatch_uid="test_b2c_request_post_save",
         )
         Mpesa.b2c_request(phone=254708374149, amount=100.0)
-        self.assertEquals(mock_signal.call_count, 1)
+        self.assertEqual(mock_signal.call_count, 1)
         post_save.disconnect(
             mock_signal,
             sender=B2CRequest,
@@ -200,7 +200,7 @@ class C2BMethodTest(TestCase):
         Mpesa.stk_push(
             phone=254708374149, amount=100.0, account_reference="Test"
         )
-        self.assertEquals(mock_signal.call_count, 1)
+        self.assertEqual(mock_signal.call_count, 1)
         post_save.disconnect(
             mock_signal,
             sender=OnlineCheckout,

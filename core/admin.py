@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import MarketType,Selection ,Subselection,BetSettingVar
+from core.models import MarketType,Selection,Subselection,BetSettingVar,SettingsVar
 
 
 
@@ -29,9 +29,17 @@ class SubselectionAdmin(admin.ModelAdmin):
 admin.site.register(Subselection, SubselectionAdmin) 
 
 class BetSettingVarAdmin(admin.ModelAdmin):
-    list_display = ('id','per_retun','min_redeem_refer_credit','refer_per','closed_at','results_at','wheelspin_id','created_at','updated_at',)
+    list_display = ('id','per_retun','min_redeem_refer_credit','refer_per','closed_at','results_at','wheelspin_id','ksh_unit','created_at','updated_at',)
     list_display_links = ('id',)
-    list_editable = ('per_retun','min_redeem_refer_credit','refer_per','closed_at','results_at','wheelspin_id')
+    list_editable = ('per_retun','min_redeem_refer_credit','refer_per','closed_at','results_at','wheelspin_id','ksh_unit')
 
 
 admin.site.register(BetSettingVar, BetSettingVarAdmin) 
+
+class SettingUpAdmin(admin.ModelAdmin):
+    list_display = ('id','curr_unit','created_at','updated_at',)
+    list_display_links = ('id',)
+    list_editable = ('curr_unit',)
+
+
+admin.site.register(SettingsVar, SettingUpAdmin) 

@@ -6,7 +6,7 @@ from random import randint
 from django.utils import timezone
 from core.models import TimeStamp,Market,MarketType,Selection ,BetSettingVar
 from account.models import RefCredit
-from core.functions import set_up
+from core.models import set_up
 from account.models import update_account_bal_of,current_account_bal_of ,log_record,refer_credit_create
 # from django.contrib.auth.models import User
 # from users.models import User
@@ -16,6 +16,7 @@ User = get_user_model() #make apps independent
 class WheelSpin(Market): 
     market = models.ForeignKey(MarketType,on_delete=models.CASCADE,related_name='wp_markets',blank =True,null= True)   
     # per_relief = models.FloatField(blank =True,null= True)
+    per_retun = models.FloatField(default = 0,blank =True,null= True)
     class Meta:
         db_table = "d_wheel_markets"
 
@@ -39,7 +40,6 @@ class WheelSpin(Market):
             total_amount = Stake.objects.filter(market_id = self.id ).filter(marketselection_id = 1).aggregate(bet_amount =Sum('amount'))
             if total_amount.get('bet_amount'):
                 return total_amount.get('bet_amount')
- 
             return  0
             
         except Exception as e:
@@ -87,7 +87,7 @@ class WheelSpin(Market):
     @property
     def gain_after_relief(self):
         print(f'setUP{set_up}')
-        per_to_return = set_up.per_retun
+        per_to_return = self.per_retun
         return ((100 - per_to_return)/100)*float(self.offset)
 
     def save(self, *args, **kwargs):
@@ -355,7 +355,7 @@ class Result(TimeStamp):
             elif self.resu ==1:
                 all_lose_stake = float(self.market.white_bet_amount)
 
-            per_to_return = float(set_up.per_retun) # 
+            per_to_return = float(self.market.per_retun) # 
             relief_amount = self.per_return_relief(all_gain,userstake,all_lose_stake,per_to_return)
 
             new_bal = user_current_account_bal + relief_amount
@@ -384,7 +384,7 @@ class Result(TimeStamp):
        
     def update_db_records(self):
         try:
-            set_per_return = set_up.per_retun
+            set_per_return = self.market.per_retun
             self.return_per =set_per_return
             self.gain = self.market.gain_after_relief
             WheelSpin.objects.filter(id = self.market_id).update(receive_results =True) # self.market.update(closed=True) or self.market.closed=True DOESN'T WORK
