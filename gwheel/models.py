@@ -86,19 +86,18 @@ class WheelSpin(Market):
 
     @property
     def gain_after_relief(self):
-        print(f'setUP{set_up}')
         per_to_return = self.per_retun
         return ((100 - per_to_return)/100)*float(self.offset)
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on staking  '''
-        self.closed_at = self.open_at + timedelta(minutes = set_up.closed_at)
-        self.results_at = self.open_at + timedelta(minutes =set_up.results_at)
+        self.closed_at = self.open_at + timedelta(minutes = set_up['closed_at'])
+        self.results_at = self.open_at + timedelta(minutes =set_up['results_at'])
 
         if self.active and not self.place_stake_is_active:
             self.active = False
         try:
-            self.market,_ = MarketType.objects.get_or_create( id= int(set_up.wheelspin_id) ) #get_or_create return a tuple/
+            self.market,_ = MarketType.objects.get_or_create( id= int(set_up['wheelspin_id'] ) )#get_or_create return a tuple/
         except:
             self.market,_ = MarketType.objects.get_or_create( id= 1)
             
@@ -327,7 +326,7 @@ class Result(TimeStamp):
         if this_user_stak_obj.marketselection_id == self.resu:
             amount = float(this_user_stak_obj.amount)
             odds = float(this_user_stak_obj.marketselection.odds)
-            per_for_referer = set_up.refer_per  # Settings
+            per_for_referer = set_up['refer_per']  # Settings
             win_amount = amount *odds
 
             if per_for_referer > 100: # Enforce 0<=p<=100 TODO

@@ -11,18 +11,18 @@ router = DefaultRouter()
 app_name = 'users'
 
 urlpatterns = [
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
     path('user/', UserRecordView.as_view(), name='users'),
 #     path('user_detail=<user_name>', UserIDView.as_view(), name='users'),
 
 #    # Django  template
-#     path('login/', views.login_view, name="login"),
+    # path('login', views.login_view, name="login"),
 #     path('register/', views.register_user, name="register"),
 #     path('logout/', views.logout, name="logout"),
-    path('user_page/', views.user_page, name="user_page"),
+    path('user_page', views.user_page, name="user_page"),
     path('notification', views.notification, name="notification"),
 
-    path('mine_users/', views.mine_users, name="mine_users"),
+    path('mine_users', views.mine_users, name="mine_users"),
 
 #     path('', views.index, name='index'),
 #     path('roulette', views.roulette, name='roulette'),
@@ -31,8 +31,8 @@ urlpatterns = [
 #     path('seed', views.seed, name='seed'),
 #     path('provably', views.provably, name='provably'),
 #     path('shoutbox', views.shoutbox, name='shoutbox'),
-    path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login', views.CustomLoginView.as_view(), name='login'),
+    path('logout', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
 #     re_path(r'^password_reset/$', auth_views.password_reset,
 #             name='password_reset'),

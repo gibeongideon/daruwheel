@@ -11,3 +11,5 @@ class UserTestCase(TestCase):
         """Create user """
         user = User.objects.get(username="test_user")
         self.assertEqual(user.username, 'test_user')
+
+        

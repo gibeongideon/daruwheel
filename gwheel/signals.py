@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from gwheel.models import Result,OutCome
+from gwheel.models import Result,OutCome, CumulativeGain
 from channels.layers import get_channel_layer
 # from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
@@ -38,6 +38,14 @@ def on_results_save(sender,instance, **kwargs):
         pass # issues with channel shouldn't inter normal business from being done
 
     try:
+        try:  #  need test
+            cum ,created = CumulativeGain.objects.update_or_create(id=1)
+            if created:
+                pass
+        except:
+            pass
+
+
         Result.objects.update_or_create(market_id = instance.market_id,cumgain_id =1 )
 
     except Exception as re:

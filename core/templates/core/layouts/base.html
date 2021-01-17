@@ -38,11 +38,21 @@
 <body class="">
   <div class="wrapper">
 
-    {% include 'core/includes/sidebar.html' %}
+    {% if user.is_authenticated %}
+
+        {% include 'core/includes/sidebar.html' %}
+
+    {% endif %}
+
+    
 
     <div class="main-panel">
+      {% if user.is_authenticated %}
+    
+        {% include 'core/includes/navigation.html' %}
 
-      {% include 'core/includes/navigation.html' %}
+      {% endif %}
+
 
       <div class="content">
 

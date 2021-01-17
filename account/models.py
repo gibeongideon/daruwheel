@@ -245,7 +245,7 @@ class CashDeposit(TimeStamp):
     and connect every deposit with user and used currency.
     """
     # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
     deposited = models.BooleanField(blank =True ,null= True)
     has_record = models.BooleanField(blank =True ,null= True)
 

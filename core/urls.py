@@ -2,6 +2,7 @@
 
 from django.urls import path, re_path
 from core import views
+from spinchannel import views as spinview
 
 app_name = 'core'
 
@@ -10,7 +11,7 @@ urlpatterns = [
     re_path(r'^.*\.html', views.pages, name='pages'),
 
     # The home page
-    path('', views.index, name='home'),
+    path('', spinview.daru_spin, name='daru_spin'),
     path('icons', views.icons, name='icons'),
     path('maps', views.maps, name='maps'),
     path('topo', views.topo, name='topo'),

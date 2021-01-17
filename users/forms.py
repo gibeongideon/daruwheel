@@ -95,7 +95,8 @@ class SignUpForm(UserCreationForm):
     """
 
     username = forms.CharField(max_length=50, required=True,
-        label='', help_text='Required. Inform unique username',
+        label='',
+        help_text='Required. Inform unique username',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Username...'
@@ -117,7 +118,7 @@ class SignUpForm(UserCreationForm):
 
     phone_number = forms.CharField(max_length=150, required=False,
         label='',
-        help_text='Start with 254 i.e 254700000000.Confirm before you register',
+        help_text='E.g   07200200200 or 01200200200',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Phone Number...'
@@ -128,6 +129,14 @@ class SignUpForm(UserCreationForm):
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
             'placeholder': 'Email...'
+        }))
+
+    daru_code = forms.CharField(max_length=150, required=False,
+        label='',
+        help_text='Enter your referer CODE here.Dont have ? Enter ADMIN',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Refer code'
         }))
 
     password1 = forms.CharField(required=True,
@@ -147,6 +156,6 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'phone_number',
-            'email', 'password1', 'password2')
+            'email','daru_code', 'password1', 'password2')
 
         

@@ -180,7 +180,13 @@ USE_TZ = True
 
 # Set custom user model
 AUTH_USER_MODEL = 'users.User'
+# Disable adding slash
+APPEND_SLASH = False
 
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # One month
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL ='/users/login'
 
 
 # Static files (CSS, JavaScript, Images)

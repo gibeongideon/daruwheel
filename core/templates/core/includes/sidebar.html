@@ -5,11 +5,11 @@
         
         <div class="logo">
           <a target="_blank" 
-             href="https://www.daruandwheel.com" class="simple-text logo-mini">
+             href="/" class="simple-text logo-mini">
             
           </a>
           <a target="_blank" 
-             href="https://www.daruandwheel.com" class="simple-text logo-normal">
+             href="/" class="simple-text logo-normal">
             Daru Casino
           </a>
         </div>
@@ -17,48 +17,68 @@
         {% if user.is_authenticated %}
         <ul class="nav">
           <li class="active ">
-            <a href="/">
+            <a href="/">  
               <i class="tim-icons icon-chart-pie-36"></i>
               <p>Home</p>
             </a>
           </li>
           <li>
             <a href="{% url 'spinchannel:daru_spin' %}">
-              <i class="tim-icons icon-atom"></i>
+              <i class="tim-icons icon-support-17"></i>
               <p>Daru Wheel</p>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a href="{% url 'users:notification' %}">
               <i class="tim-icons icon-bell-55"></i>
               <p>My Company</p>
             </a>
-          </li>
+          </li> -->
           <li>
 
             <a href="{% url 'account:trans_log' %}">
-              <i class="tim-icons icon-pin"></i>
+              <i class="tim-icons icon-single-copy-04"></i>
               <p>Transactions Log</p>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a href="{% url 'core:maps' %}">
               <i class="tim-icons icon-pin"></i>
               <p>maps</p>
             </a>
+          </li> -->
+          <li>
+            <a href= "{% url 'users:mine_users' %}">
+              <i class="tim-icons icon-molecule-40"></i>
+              <p>My Users</p>
+            </a>
           </li>
+          <li>
+            <a href= "{% url 'users:mine_users' %}">
+              <i class="tim-icons icon-puzzle-10"></i>
+              <p>Refer Income</p>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'core:icons' %}">
+              <i class="tim-icons icon-wallet-43"></i>
+              <p>Wallet</p>
+            </a>
+          </li>
+
           <li>
             <a href="{% url 'core:icons' %}">
               <i class="tim-icons icon-pin"></i>
               <p>icons</p>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a href="{% url 'core:maps' %}">
               <i class="tim-icons icon-pin"></i>
               <p>topo</p>
             </a>
-          </li>
+          </li> -->
 
           <li>
             <a href="{% url 'users:notification' %}">
@@ -72,25 +92,19 @@
               <p>User Profile</p>
             </a>
           </li>
-          <li>
-            <a href= "{% url 'users:mine_users' %}">
-              <i class="tim-icons icon-puzzle-10"></i>
-              <p>My Users</p>
-            </a>
-          </li>
-          <li>
+          <!-- <li>
             <a href="{% url 'core:topo' %}">
               <i class="tim-icons icon-align-center"></i>
               <p>Share</p>
             </a>
-          </li>
+          </li> -->
 
-          <li>
+          <!-- <li>
             <a href="{% url 'core:support' %}">
               <i class="tim-icons icon-world"></i>
               <p>Support</p>
             </a>
-          </li>
+          </li> -->
           <li>
             <a href="{% url 'users:logout' %}" >
               <i class="tim-icons icon-user-run"></i>
@@ -105,6 +119,7 @@
               <p>See product</p>
             </a>
           </li> -->
+    
         </ul>
         {% endif %}
         
