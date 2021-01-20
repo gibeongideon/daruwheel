@@ -297,14 +297,14 @@ class Result(TimeStamp):
          
             this_user_ReferCode = this_user.daru_code # first name is used as referer code
             if not this_user_ReferCode:
-                this_user_ReferCode = 'DADMIN'  # settings
+                this_user_ReferCode = 'ADMIN'  # settings
             
             referer_users = User.objects.filter(my_code = this_user_ReferCode)
             for referer in referer_users:
                 print(referer,'RefererUser')
 
                 refer_credit_create(referer,this_user.username,ref_credit) #F4
-                log_record(referer.id,ref_credit,'ref_credit') # F1
+                # log_record(referer.id,ref_credit,'ref_credit') # F1 Redundant
 
         except Exception as e:
             print('update_reference_account ERROR',e)
@@ -327,6 +327,7 @@ class Result(TimeStamp):
             amount = float(this_user_stak_obj.amount)
             odds = float(this_user_stak_obj.marketselection.odds)
             per_for_referer = set_up['refer_per']  # Settings
+            print('REFFC:{per_for_referer}')
             win_amount = amount *odds
 
             if per_for_referer > 100: # Enforce 0<=p<=100 TODO

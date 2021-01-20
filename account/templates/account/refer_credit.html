@@ -14,7 +14,7 @@
   <div class="col-md-12">
     <div class="card ">
       <div class="card-header">
-        <h4 class="card-title"> All Transactions</h4>
+        <h4 class="card-title"> Credit From My Users</h4>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -25,7 +25,7 @@
                   Date
                 </th>
                 <th>
-                  Transaction Type
+                  Credit From
                 </th>
                 <th>
                   Amount
@@ -33,23 +33,29 @@
                 <th class="text-center">
                   Current balance
                 </th>
+                <th>
+                  Approved
+                </th>
               </tr>
             </thead>
             <tbody>
-              {% for trans in trans_logz%}
+              {% for trans in refer_credit%}
 
               <tr>
                 <td>
                   {{trans.created_at}}
                 </td>
                 <td>
-                  {{trans.trans_type}}
+                  {{trans.credit_from}}
                 </td>
                 <td>
                   {{trans.amount}}
                 </td>
                 <td class="text-center">
-                  {{trans.now_bal}}
+                  {{trans.current_bal}}
+                </td>
+                <td>
+                  {{trans.approved}}
                 </td>
               </tr>
 

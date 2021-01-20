@@ -1,8 +1,8 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-# from django.contrib.auth.models import User
-#from .models import User
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -93,7 +93,12 @@ class SignUpForm(UserCreationForm):
     Define methods to increase and decrese token_count amount,
     betting and check if bet is possible.
     """
-
+    error_messages = {
+        'invalid_code': _(
+            "invalid code.The code doent exist"
+        ),
+    }
+    
     username = forms.CharField(max_length=50, required=True,
         label='',
         help_text='Required. Inform unique username',
@@ -116,7 +121,7 @@ class SignUpForm(UserCreationForm):
     #         'placeholder': 'Last name...'
     #     }))
 
-    phone_number = forms.CharField(max_length=150, required=False,
+    phone_number = forms.CharField(max_length=150, required=True,
         label='',
         help_text='E.g   07200200200 or 01200200200',
         widget=forms.TextInput(attrs={
@@ -131,7 +136,7 @@ class SignUpForm(UserCreationForm):
             'placeholder': 'Email...'
         }))
 
-    daru_code = forms.CharField(max_length=150, required=False,
+    daru_code = forms.CharField(max_length=150, required=True,
         label='',
         help_text='Enter your referer CODE here.Dont have ? Enter ADMIN',
         widget=forms.TextInput(attrs={
@@ -158,4 +163,11 @@ class SignUpForm(UserCreationForm):
         fields = ('username', 'phone_number',
             'email','daru_code', 'password1', 'password2')
 
-        
+    def cleaned_daru_code(self):
+        user =User.objects.get(username=self.username)
+        if self.daru_code not in User.codes():
+            raise ValidationError(
+                self.error_messages['invalid_code'],
+                code='invalid_code',
+            )
+

@@ -24,17 +24,18 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'i#r2p5_12xnuojmk)@$$ix78r^b=f__@vf*tw4nv665-yo14)j'
+SECRET_KEY = 'i#r2p5_12xnuojmk)@$$ix78r^b=f__@vf*tw4nv665-yo14)j' #fix 4 production
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True #fix 4 production
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*'] #fix 4 production
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,12 +45,9 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework.authtoken',
-    'channels',# resolve  apps which need run server commands# move to top
     'core',
     'account',
     'gwheel',
-    # 'django_celery_results',
-    # 'django_celery_beat'#no
     'spinchannel',
     'mpesa_api',
     'cash_trans',
@@ -103,7 +101,7 @@ ASGI_APPLICATION = 'spinpesa.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(PROJECT_DIR, './database/db.sqlite3'),
     }
 }
 
@@ -181,19 +179,22 @@ USE_TZ = True
 # Set custom user model
 AUTH_USER_MODEL = 'users.User'
 # Disable adding slash
-APPEND_SLASH = False
+# APPEND_SLASH = False
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # One month
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL ='/users/login'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # fix 4 production
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static'))
+STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, './static')) #for production server
+
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
 # MEDIA_UPLOAD_FOLDER = '%Y_%m_%d/'

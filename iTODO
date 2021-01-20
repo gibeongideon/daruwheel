@@ -11,3 +11,41 @@ User Log in/logout/registeration/forgot password/reset password//templates/TESTS
 
 
 Welcome page//Golden/Yellow/Deposit/STK PUSH
+
+
+
+##NEXT
+
+
+
+Deploy:1 30th jan 2021
+login/logout  DONE
+bet/running wheel DONE
+accurate_bet Math Spin_wheel/gwheel DONE
+Deposit /
+Withraw /fake delay/
+user lose/get credit
+
+
+Create withrawable credit/Min/limit random withraws
+
+my userIncome/Display Cum win/top text to say remaining amount to be approved/Encourage users to get more/
+
+Deposit/Withraw Button working/atleast Send from other person
+Reset Email by user Official 
+
+Deploy:2 15th Feb 2021
+pip install django-phone-verify
+Mpesa Intergration
+
+
+
+Deploy:3 
+Paypal Intergration
+djstripe
+add market
+
+
+Deploy:4 
+
+?????

@@ -44,7 +44,7 @@ def user_page(request):
 
 @login_required(login_url='/users/login')
 def mine_users(request):
-    mine_users =list(User.objects.filter(last_name =request.user.first_name))
+    mine_users = User.objects.filter(daru_code =request.user.my_code)
     
     return render(request, 'users/mine_users.html',{'mine_users': mine_users})
 

@@ -5,7 +5,7 @@ from gwheel.forms import StakeForm
 from gwheel.models import Stake
 
 
-@login_required(login_url='/users/login/')
+@login_required(login_url='/users/login')
 def daru_spin(request):
 
     stake_form = StakeForm()

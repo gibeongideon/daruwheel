@@ -15,6 +15,8 @@ class Account(TimeStamp):
 
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     actual_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    withrawable_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
     refer_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     trial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=50000)
     active = models.BooleanField(default= True)
@@ -54,6 +56,18 @@ class Account(TimeStamp):
         else:
             raise NegativeTokens()
 
+    # @staticmethod
+    # def inter_account_transfer(sending_user,receiving_user,amount):
+    #     if receiving_user.user_exist:
+    #         user_bal=current_account_bal_of(sending_user.id)
+    #         new_bal = user_bal - amount
+    #         update_account_bal_of(sending_user.id,new_bal)
+
+    #         user_bal=current_account_bal_of(receiving_user.id)
+    #         new_bal = user_bal + amount
+    #         update_account_bal_of(receiving_user.id,new_bal)
+
+   
 class Curr_Variable(TimeStamp):
     """Store currencies with specified name and rate to token amount."""
 
@@ -70,7 +84,9 @@ class Curr_Variable(TimeStamp):
     #         cls.objects.get(id=1).update(curr_unit= value)
     #     except Exception as e :
     #         print(f'update_curr_unit{e}')
-            
+
+
+
 
 class Currency(TimeStamp):
     """Store currencies with specified name and rate to token amount."""
@@ -203,6 +219,7 @@ class RefCredit(TimeStamp):
 
             if not self.has_record:
                 log_record(self.user_id,self.amount,'RC')
+                self.has_record =True
 
         except Exception as e:
             print('RefCredit:',e)
@@ -304,8 +321,8 @@ class CashWithrawal(TimeStamp): # sensitive transaction
     signaled and connect every withdraw with user and used currency.
     """
     # amount = models.DecimalField(('amount'), max_digits=12, decimal_places=2, default=0)
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
-    address = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    address = models.CharField(max_length=100,blank= True,null =True)
     
     approved = models.BooleanField(default=False,blank= True,null =True)
     withrawned = models.BooleanField(blank= True,null =True)
@@ -319,7 +336,7 @@ class CashWithrawal(TimeStamp): # sensitive transaction
         )    
     currency_id = models.ForeignKey(
         Currency,
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE,blank= True,null =True
         )
 
 
@@ -354,8 +371,10 @@ class CashWithrawal(TimeStamp): # sensitive transaction
 
     def save(self, *args, **kwargs):
         ''' Overrride internal model save method to update balance on deposit  '''
-        account_is_active = self.user_account.active
-        ctotal_balanc = self.user_account.balance
+        account_is_active = self.user.active
+        ctotal_balanc = current_account_bal_of(self.user_id)
+        #  = self.user.user_account.withrawable_balance
+        withrawable_bal =float(Account.objects.get(user_id =self.user_id).withrawable_balance)
 
         if self.active: # edit prevent # avoid data ma
             if account_is_active:# withraw cash ! or else no cash!
@@ -363,9 +382,9 @@ class CashWithrawal(TimeStamp): # sensitive transaction
                     if not self.withrawned and self.approved:# stop repeated withraws and withraw only id approved by ADMIN 
                         charges_fee = self.charges_fee # TODO settings
 
-                        if ctotal_balanc >= ( self.amount + charges_fee):
+                        if ( self.amount + charges_fee) <= ctotal_balanc and ( self.amount + charges_fee) <= withrawable_bal :
                             try:                                
-                                new_bal = ctotal_balanc - self.amount - charges_fee
+                                new_bal = ctotal_balanc - float(self.amount) - charges_fee
                                 update_account_bal_of(self.user_id,new_bal) # F
                                 self.withrawned = True # transaction done
 
@@ -415,3 +434,4 @@ def refer_credit_create(credit_to_user,credit_from_username,amount):
         RefCredit.objects.update_or_create(user = credit_to_user,credit_from = credit_from_username, amount= amount)
     except Exception as e:
         print(f'RRR{e}')
+

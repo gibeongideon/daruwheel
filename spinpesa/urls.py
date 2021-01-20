@@ -26,6 +26,7 @@ admin.site.site_header = 'SystemX Admin'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls',namespace='core')),
+    # path('users/', include('django.contrib.auth.urls')),#,namespace='users')),
     path('users/', include('users.urls',namespace='users')),
     path('account/', include('account.urls',namespace='accounts')),
     path('gwheel/', include('gwheel.urls',namespace='gwheels')),

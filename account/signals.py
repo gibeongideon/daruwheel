@@ -3,8 +3,9 @@ from django.db.models.signals import post_save
 # from  users.models import User
 from .models import Account
 from mpesa_api.models import OnlineCheckoutResponse
-from .models import update_account_bal_of ,current_account_bal_of,log_record
+from .models import  Account,CashWithrawal, update_account_bal_of ,current_account_bal_of,log_record
 from django.contrib.auth import get_user_model
+from gwheel.models import Stake # place in function to avoid circular dependencies
 
 User = get_user_model()
 
@@ -35,3 +36,39 @@ def update_account_balance_on_mpesa_deposit(sender,instance,created, **kwargs):
             
     except Exception as e:
         print('MPESA DEPO',e)
+
+
+@receiver(post_save, sender= Stake) 
+def update_user_withrawable_balance_onstake(sender,instance,created, **kwargs):
+    try:
+        
+        if created:
+            now_withrawable = float(Account.objects.get(user_id =instance.user_id).withrawable_balance)
+            print(f'now_withrawableS:{now_withrawable}')
+            added_amount = float(instance.amount)
+            print(f'added_amountS:{added_amount}')
+            total_withwawable = now_withrawable + added_amount
+
+            if total_withwawable>0:
+                Account.objects.filter(user_id =instance.user_id).update(withrawable_balance= total_withwawable)
+
+    except Exception as e:
+        print('Withrable cal err_onstake',e)
+
+
+@receiver(post_save, sender= CashWithrawal) 
+def update_user_withrawable_balance_onwithraw(sender,instance,created, **kwargs):
+    try:
+        if created: #and instance.active=False:
+            now_withrawable = float(Account.objects.get(user_id =instance.user_id).withrawable_balance)
+            print(f'now_withrawableW:{now_withrawable}')
+            deduct_amount = float(instance.amount)
+            print(f'added_amountW:{deduct_amount}')
+            total_withwawable = now_withrawable - deduct_amount
+
+            if total_withwawable>0:
+                Account.objects.filter(user_id =instance.user_id).update(withrawable_balance= total_withwawable)
+
+    except Exception as e:
+        print('Withrable cal err_onwithraw',e)
+

@@ -117,29 +117,25 @@ class Subselection(TimeStamp):
 # set_up = variables_settings()
 
 
-set_up ={'return_val':0,'min_redeem_refer_credit':1000,'refer_per':0,'closed_at':4.7,'results_at':4.8,'wheelspin_id':1,'curr_unit':10}
+set_up ={'return_val':0,'min_redeem_refer_credit':5000,'refer_per':5,'closed_at':4.7,'results_at':4.8,'wheelspin_id':1,'curr_unit':10}
 
 from account.models import Currency
 class SettingsVar(TimeStamp):
-    per_retun = models.FloatField(default = 0,blank =True,null= True)
-    # min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
-    # refer_per = models.FloatField(default = 0,blank =True,null= True)
-    # closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
-    # results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
-    # wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
+    return_val = models.FloatField(default = 0,blank =True,null= True)
+    min_redeem_refer_credit = models.FloatField(default = 1000,blank =True,null= True)
+    refer_per = models.FloatField(default = 0,blank =True,null= True)
+    closed_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8,blank =True,null= True)
+    results_at = models.FloatField(help_text ='sensitive settings value.Dont edit',default =8.1,blank =True,null= True)
+    wheelspin_id= models.IntegerField(help_text ='super critical setting value.DONT EDIT!',default=1,blank=True,null=True)
     curr_unit= models.DecimalField(max_digits=6, decimal_places=2,blank=True,null= True)
     
     def save(self, *args, **kwargs):
-       
-        try:
-            Curr_Variable.update_curr_unit(self.curr_unit)
-            # set_up['curr_unit'] = self.curr_unit
-        except:
-            pass
-        
-        # try:
-        #     WheelSpin.objects.filter(user_id =user_id).update(curr_unit= self.curr_unit)
-        # except:
-        #     pass
+
+        set_up['curr_unit'] = self.curr_unit
+        set_up['return_val'] = self.return_val
+        set_up['min_redeem_refer_credit'] = self.min_redeem_refer_credit
+        set_up['refer_per'] = self.refer_per
+        set_up['curr_unit'] = self.curr_unit
+
             
         super().save(*args, **kwargs)
