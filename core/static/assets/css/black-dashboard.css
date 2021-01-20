@@ -17064,7 +17064,7 @@ table.tablesorter thead tr .headerSortDown {
 .fixed-plugin .dropdown-menu>.active>a,
 .fixed-plugin .dropdown-menu>.active>a:hover,
 .fixed-plugin .dropdown-menu>.active>a:focus {
-  color: #777777;
+  color: #f5d104;
   text-align: center;
 }
 
@@ -17203,7 +17203,7 @@ table.tablesorter thead tr .headerSortDown {
   position: relative;
   top: -7px;
   font-size: 0.62475rem;
-  color: #ffffff;
+  color: #f30909;
 }
 
 .fixed-plugin .adjustments-line .dropdown-menu>li.adjustments-line>a {
